@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "book-inquiry"
+  },
+  "targets": {
+    "book-inquiry": {
+      "hosting": {
+        "search": ["book-inquiry"]
+      }
+    }
+  }
+}

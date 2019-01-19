@@ -1,0 +1,4 @@
+node_modules
+hosting/dist/bundle.*
+.env
+.firebase/*

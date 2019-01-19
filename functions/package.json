@@ -1,0 +1,17 @@
+{
+  "description": "A basic book search powered by the Google Books API",
+  "author": "Evan Higgins <evdhiggins@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evdhiggins/book-inquiry.git"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "license": "MIT",
+  "version": "1.0.0",
+  "dependencies": {
+    "firebase-admin": "^6.5.0",
+    "firebase-functions": "^2.1.0"
+  }
+}

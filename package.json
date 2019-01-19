@@ -1,0 +1,35 @@
+{
+  "name": "book-inquiry",
+  "description": "A basic book search powered by the Google Books API",
+  "author": "Evan Higgins <evdhiggins@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evdhiggins/book-inquiry.git"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "license": "MIT",
+  "version": "1.0.0",
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-html": "^5.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "firebase-tools": "^6.3.0",
+    "npm-run-all": "^4.1.5"
+  },
+  "scripts": {
+    "build": "run-p \"build:*\"",
+    "build:client": "cd hosting & npm run build",
+    "dev": "run-p \"dev:*\"",
+    "dev:client": "cd hosting & npm run dev",
+    "dev:functions": "firebase serve --only functions",
+    "deploy": "firebase deploy",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "install": "run-p \"install:*\"",
+    "install:hosting": "cd hosting & npm install",
+    "install:functions": "cd functions & npm install"
+  }
+}
