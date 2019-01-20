@@ -2,3 +2,5 @@ node_modules
 hosting/dist/bundle.*
 .env
 .firebase/*
+firebase-debug.log
+.runtimeconfig.json

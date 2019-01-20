@@ -2,10 +2,15 @@ module.exports = {
   root: true,
   env: {
     browser: true,
+    "jest/globals": true
   },
   parserOptions: {
-    sourceType: 'module',
+    sourceType: "module"
   },
-  plugins: ['html'],
-  extends: ['airbnb-base'],
+  plugins: ["html", "jest"],
+  extends: ["airbnb-base"],
+  rules: {
+    // console.error() is used to log server function errors to StackDriver
+    "no-console": 0
+  }
 };
