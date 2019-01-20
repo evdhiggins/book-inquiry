@@ -6,9 +6,6 @@
     "type": "git",
     "url": "git+https://github.com/evdhiggins/book-inquiry.git"
   },
-  "engines": {
-    "node": "8"
-  },
   "license": "MIT",
   "version": "1.0.0",
   "devDependencies": {
@@ -21,15 +18,15 @@
   },
   "scripts": {
     "build": "run-p \"build:*\"",
-    "build:client": "cd hosting & npm run build",
+    "build:hosting": "cd hosting & npm run build",
     "dev": "run-p \"dev:*\"",
-    "dev:client": "cd hosting & npm run dev",
     "dev:functions": "firebase serve --only functions",
+    "dev:hosting": "cd hosting & npm run dev",
     "deploy": "firebase deploy",
     "deploy:functions": "firebase deploy --only functions",
     "deploy:hosting": "firebase deploy --only hosting",
     "install": "run-p \"install:*\"",
-    "install:hosting": "cd hosting & npm install",
-    "install:functions": "cd functions & npm install"
+    "install:functions": "cd functions & npm install",
+    "install:hosting": "cd hosting & npm install"
   }
 }
