@@ -1,0 +1,74 @@
+<div class="search-item">
+	<div class="item-image">
+		<img src={imageUrl} alt="Cover image for {title}">
+	</div>
+	<div class="item-main">
+		<div class="item-title">
+			{title}
+		</div>
+		<div class="item-subtitle">
+			{authors}
+		</div>
+		<div class="item-snippet">{item.searchInfo.textSnippet}</div>
+	</div>
+</div>
+
+<script>
+  export default {
+    computed: {
+      authors({ item }) {
+        return item.volumeInfo.authors.join(", ");
+      },
+      title({ item }) {
+        return item.volumeInfo.title;
+      },
+      imageUrl({ item }) {
+        return item.volumeInfo.imageLinks.thumbnail;
+      }
+    }
+  };
+</script>
+
+<style>
+  .search-item {
+    display: flex;
+    border-radius: 3px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.12);
+    margin-bottom: 2vh;
+  }
+
+  .item-image {
+    flex-basis: 25%;
+  }
+
+  .item-image > img {
+    width: 100%;
+    height: auto;
+    border-radius: 3px 0px 0px 3px;
+    margin-bottom: -4px;
+  }
+
+  .item-main {
+    flex-basis: 75%;
+    display: flex;
+    flex-direction: column;
+    margin: 0vh 1vw 1vh 1vw;
+  }
+
+  .item-title {
+    font-size: 1.5em;
+    color: #333;
+  }
+
+  .item-subtitle {
+    font-size: 1.15em;
+    color: #999;
+  }
+
+  @media (max-width: 600px) {
+    .item-snippet {
+      display: none;
+    }
+  }
+</style>

@@ -2,13 +2,17 @@
 	<div class="searchbar-container">
 		<SearchBar on:search="performSearch(event.searchValue)" />
 	</div>
+	<div class="results-container">
+		{#each items as item}
+		<SearchItem {item} /> {/each}
+	</div>
 </div>
-<pre>{JSON.stringify(items, null,4)}</pre>
 
 <script>
   export default {
     components: {
-      SearchBar: "../components/SearchBar.html"
+      SearchBar: "../components/SearchBar.html",
+      SearchItem: "../components/SearchItem.html"
     },
     data() {
       return {
@@ -44,6 +48,11 @@
     display: flex;
     justify-content: center;
     width: 100%;
+  }
+
+  .results-container {
+    display: flex;
+    flex-direction: column;
   }
 
   @media (max-width: 1000px) {
