@@ -2,10 +2,12 @@
 <SearchPage />
 
 <script>
+	import store from "./store/index";
 	export default {
 	  components: {
 	    SearchPage: "./pages/SearchPage.html"
-	  }
+	  },
+	  store: () => store
 	};
 </script>
 

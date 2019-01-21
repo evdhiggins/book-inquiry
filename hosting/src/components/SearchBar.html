@@ -1,5 +1,5 @@
 <input type="text" bind:value=searchValue>
-<button on:click="fire('search', { searchValue } )">Search</button>
+<button on:click="$performSearch(searchValue)">Search</button>
 
 <script>
   export default {
