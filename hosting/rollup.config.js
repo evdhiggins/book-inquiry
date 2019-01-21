@@ -2,6 +2,7 @@ import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
+import replace from 'rollup-plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -14,6 +15,12 @@ export default {
     file: 'dist/bundle.js',
   },
   plugins: [
+    replace({
+      include: './src/store/index.js',
+      values: {
+        ENVIRONMENT: production ? 'prod' : 'dev',
+      },
+    }),
     svelte({
       // skip transitions on first load
       skipIntroByDefault: true,

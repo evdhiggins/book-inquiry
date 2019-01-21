@@ -11,9 +11,12 @@
     "rollup": "^1.1.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-replace": "^2.1.0",
     "rollup-plugin-svelte": "^5.0.1",
     "rollup-plugin-terser": "^4.0.2",
-    "sirv-cli": "^0.2.3",
+    "sirv-cli": "^0.2.3"
+  },
+  "dependencies": {
     "svelte": "^2.16.0"
   },
   "scripts": {
