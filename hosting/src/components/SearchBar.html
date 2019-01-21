@@ -1,0 +1,12 @@
+<input type="text" bind:value=searchValue>
+<button on:click="fire('search', { searchValue } )">Search</button>
+
+<script>
+  export default {
+    data() {
+      return {
+        searchValue: ""
+      };
+    }
+  };
+</script>
