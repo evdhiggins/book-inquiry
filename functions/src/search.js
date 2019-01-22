@@ -1,5 +1,5 @@
 const functions = require('firebase-functions');
-const { createSearchUrl, fetch } = require('./utilities');
+const { createSearchUrl, fetch, prepareItem } = require('./utilities');
 
 exports.search = async (req, res) => {
   try {
@@ -8,6 +8,7 @@ exports.search = async (req, res) => {
     if (results.error) {
       throw new Error(results.error);
     }
+    results.items = results.items.map(prepareItem);
     res.send(results);
   } catch (e) {
     // log the error to StackDriver

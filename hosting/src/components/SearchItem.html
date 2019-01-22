@@ -1,33 +1,17 @@
 <div class="search-item">
 	<div class="item-image">
-		<img src={imageUrl} alt="Cover image for {title}">
+		<img src={item.thumbnail} alt="Cover image for {item.title}">
 	</div>
 	<div class="item-main">
 		<div class="item-title">
-			{title}
+			{item.title}
 		</div>
 		<div class="item-subtitle">
-			{authors}
+			{item.authors}
 		</div>
-		<div class="item-snippet">{item.searchInfo.textSnippet}</div>
+		<div class="item-snippet">{item.textSnippet}</div>
 	</div>
 </div>
-
-<script>
-  export default {
-    computed: {
-      authors({ item }) {
-        return item.volumeInfo.authors.join(", ");
-      },
-      title({ item }) {
-        return item.volumeInfo.title;
-      },
-      imageUrl({ item }) {
-        return item.volumeInfo.imageLinks.thumbnail;
-      }
-    }
-  };
-</script>
 
 <style>
   .search-item {

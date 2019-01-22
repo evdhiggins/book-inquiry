@@ -53,3 +53,32 @@ exports.fetch = url => new Promise((res, rej) => {
       rej(error);
     });
 });
+
+// flatten an API item, setting missing fields to defaults
+// and modify fields to match desired structure
+exports.prepareItem = (item = {}) => {
+  // root-level item properties
+  const { id = '', volumeInfo = {}, searchInfo = {} } = item;
+
+  // volumeInfo properties
+  let { authors = [] } = volumeInfo;
+  const {
+    title = '', publisher = '', infoLink = '', imageLinks = {},
+  } = volumeInfo;
+  const thumbnail = imageLinks.thumbnail || '';
+
+  authors = authors.join(', ');
+
+  // searchInfo properties
+  const { textSnippet = '' } = searchInfo;
+
+  return {
+    id,
+    title,
+    authors,
+    publisher,
+    thumbnail,
+    infoLink,
+    textSnippet,
+  };
+};

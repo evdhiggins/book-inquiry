@@ -1,4 +1,4 @@
-const { createSearchUrl } = require('./utilities');
+const { createSearchUrl, prepareItem } = require('./utilities');
 
 describe('createSearchUrl', () => {
   // shorten for horizontal readability
@@ -60,5 +60,65 @@ describe('createSearchUrl', () => {
   test('Correctly include `key` input', () => {
     expect(csu({ q: 't' }, 'apiKey')).toMatch(/key=apiKey/);
     expect(csu({ q: 't' }, 'a-different-api-key')).toMatch(/key=a-different-api-key/);
+  });
+});
+
+describe('prepareItem', () => {
+  const mockItem = {
+    id: 'BEQcj-aFTYYC',
+    volumeInfo: {
+      title: 'Unruly Examples',
+      authors: ['Alexander Gelley', 'A Fake Author'],
+      publisher: 'Stanford University Press',
+      imageLinks: {
+        thumbnail:
+          'http://books.google.com/books/content?id=BEQcj-aFTYYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
+      },
+      infoLink: 'http://books.google.com/books?id=BEQcj-aFTYYC&dq=examples&hl=&source=gbs_api',
+    },
+    searchInfo: {
+      textSnippet:
+        'These 2 essays demonstrate that, beyond example&#39;s rich genealogy in the rhetorical tradition, it involves issues that are central to current theories of meaning and ethics in literature and philosophy.',
+    },
+  };
+  const mockPreparedItem = {
+    id: 'BEQcj-aFTYYC',
+    title: 'Unruly Examples',
+    authors: 'Alexander Gelley, A Fake Author',
+    publisher: 'Stanford University Press',
+    thumbnail:
+      'http://books.google.com/books/content?id=BEQcj-aFTYYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
+    infoLink: 'http://books.google.com/books?id=BEQcj-aFTYYC&dq=examples&hl=&source=gbs_api',
+    textSnippet:
+      'These 2 essays demonstrate that, beyond example&#39;s rich genealogy in the rhetorical tradition, it involves issues that are central to current theories of meaning and ethics in literature and philosophy.',
+  };
+
+  test('Return an object', () => {
+    expect(typeof prepareItem(mockItem)).toBe('object');
+  });
+
+  describe('Given a correct argument', () => {
+    const preparedItem = prepareItem(mockItem);
+
+    test('Return an object with all fields defined', () => {
+      Object.keys(mockPreparedItem).forEach((field) => {
+        expect(preparedItem[field]).not.toBe(undefined);
+      });
+    });
+
+    test('Return an object with correct values', () => {
+      Object.entries(mockPreparedItem).forEach(([key, value]) => {
+        expect(preparedItem[key]).toBe(value);
+      });
+    });
+  });
+
+  describe('Given a empty argument', () => {
+    test('Return an object with empty strings for all fields', () => {
+      const preparedItem = prepareItem();
+      Object.keys(mockPreparedItem).forEach((key) => {
+        expect(preparedItem[key]).toBe('');
+      });
+    });
   });
 });
