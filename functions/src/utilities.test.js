@@ -45,6 +45,10 @@ describe('createSearchUrl', () => {
     expect(csu({ q: 't' }, 'k')).toMatch(/startIndex=0/);
   });
 
+  test('Return a URL containing `field` query value', () => {
+    expect(csu({ q: 't' }, 'k')).toMatch(/fields=[^&]+/);
+  });
+
   test('Throw an error when api key is not a string or is empty', () => {
     const callWithKeyAs = key => () => csu({ q: 't' }, key);
     expect(callWithKeyAs(undefined)).toThrow();

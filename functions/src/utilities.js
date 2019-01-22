@@ -14,10 +14,25 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   const indexNumber = Number(startIndex);
   const index = indexNumber > 0 && indexNumber < Number.MAX_SAFE_INTEGER ? indexNumber : 0;
 
+  // fields to be requested from Google Books API
+  const fields = [
+    'totalItems',
+    'items/id',
+    // start volumeInfo
+    'items/volumeInfo(title',
+    'authors',
+    'publisher',
+    'imageLinks/thumbnail',
+    'infoLink)',
+    // end volumeInfo
+    'items/searchInfo/textSnippet',
+  ];
+
   let url = 'https://www.googleapis.com/books/v1/volumes?';
   url += `q=${q}`;
   url += `&startIndex=${index}`;
   url += '&maxResults=5';
+  url += `&fields=${fields.join(',')}`;
   url += `&key=${key}`;
 
   return url;
