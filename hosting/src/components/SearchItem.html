@@ -1,20 +1,27 @@
-<div class="search-item">
+<a class="search-item" href={item.infoLink} target="_blank">
 	<div class="item-image">
 		<img src={item.thumbnail} alt="Cover image for {item.title}">
 	</div>
 	<div class="item-main">
-		<div class="item-title">
+		<div class="item-title single-line">
 			{item.title}
 		</div>
-		<div class="item-subtitle">
+		<div class="item-subtitle single-line">
 			{item.authors}
 		</div>
 		<div class="item-snippet">{item.textSnippet}</div>
+		{#if item.publisher}
+		<div class="item-publisher single-line">
+			Published by {item.publisher}
+		</div>
+		{/if}
 	</div>
-</div>
+</a>
 
 <style>
   .search-item {
+    text-decoration: none;
+    color: inherit;
     display: flex;
     border-radius: 3px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14),
@@ -22,8 +29,20 @@
     margin-bottom: 2vh;
   }
 
+  .search-item:hover {
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.4), 0 3px 4px rgba(0, 0, 0, 0.23),
+      0 4px 2px -3px rgba(0, 0, 0, 0.24);
+  }
+
+  .search-item:focus {
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 20, 0.5), 0 4px 5px rgba(0, 0, 20, 0.35),
+      0 5px 3px -4px rgba(0, 0, 20, 0.35);
+  }
+
   .item-image {
     flex-basis: 25%;
+    min-width: 25%;
   }
 
   .item-image > img {
@@ -37,7 +56,7 @@
     flex-basis: 75%;
     display: flex;
     flex-direction: column;
-    margin: 0vh 1vw 1vh 1vw;
+    margin: 0vh 1vw 1vh 1.5vw;
   }
 
   .item-title {
@@ -48,11 +67,33 @@
   .item-subtitle {
     font-size: 1.15em;
     color: #999;
+    margin-bottom: 1vh;
+  }
+
+  .item-publisher {
+    color: #999;
+    margin-top: 2vh;
+  }
+
+  .single-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40vw;
+  }
+
+  @media (max-width: 1000px) {
+    .single-line {
+      max-width: 55vw;
+    }
   }
 
   @media (max-width: 600px) {
     .item-snippet {
       display: none;
+    }
+    .single-line {
+      max-width: 65vw;
     }
   }
 </style>
