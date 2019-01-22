@@ -113,9 +113,22 @@ describe('prepareItem', () => {
     });
   });
 
-  describe('Given a empty argument', () => {
+  describe('Given an invalid argument', () => {
+    const callWithItemAs = item => () => prepareItem(item);
+
+    test('Never throw an error', () => {
+      expect(callWithItemAs(undefined)).not.toThrow();
+      expect(callWithItemAs(null)).not.toThrow();
+      expect(callWithItemAs('string')).not.toThrow();
+    });
+
     test('Return an object with empty strings for all fields', () => {
-      const preparedItem = prepareItem();
+      let preparedItem = prepareItem(undefined);
+      Object.keys(mockPreparedItem).forEach((key) => {
+        expect(preparedItem[key]).toBe('');
+      });
+
+      preparedItem = prepareItem(null);
       Object.keys(mockPreparedItem).forEach((key) => {
         expect(preparedItem[key]).toBe('');
       });

@@ -38,6 +38,7 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   return url;
 };
 
+// fetch and parse data from a json endpoint
 exports.fetch = url => new Promise((res, rej) => {
   let responseData = '';
   https
@@ -56,7 +57,10 @@ exports.fetch = url => new Promise((res, rej) => {
 
 // flatten an API item, setting missing fields to defaults
 // and modify fields to match desired structure
-exports.prepareItem = (item = {}) => {
+exports.prepareItem = (apiItem = {}) => {
+  // default argument doesn't catch null values
+  const item = apiItem === null ? {} : apiItem;
+
   // root-level item properties
   const { id = '', volumeInfo = {}, searchInfo = {} } = item;
 
