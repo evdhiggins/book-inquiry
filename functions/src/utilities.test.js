@@ -87,7 +87,7 @@ describe('prepareItem', () => {
     authors: 'Alexander Gelley, A Fake Author',
     publisher: 'Stanford University Press',
     thumbnail:
-      'http://books.google.com/books/content?id=BEQcj-aFTYYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
+      'http://books.google.com/books/content?id=BEQcj-aFTYYC&printsec=frontcover&img=1&zoom=1&source=gbs_api',
     infoLink: 'http://books.google.com/books?id=BEQcj-aFTYYC&dq=examples&hl=&source=gbs_api',
     textSnippet:
       'These 2 essays demonstrate that, beyond example&#39;s rich genealogy in the rhetorical tradition, it involves issues that are central to current theories of meaning and ethics in literature and philosophy.',

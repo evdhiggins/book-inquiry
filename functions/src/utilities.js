@@ -61,13 +61,16 @@ exports.prepareItem = (item = {}) => {
   const { id = '', volumeInfo = {}, searchInfo = {} } = item;
 
   // volumeInfo properties
-  let { authors = [] } = volumeInfo;
   const {
     title = '', publisher = '', infoLink = '', imageLinks = {},
   } = volumeInfo;
-  const thumbnail = imageLinks.thumbnail || '';
 
+  let { authors = [] } = volumeInfo;
   authors = authors.join(', ');
+
+  // remove curled-corner modifier from images
+  let thumbnail = imageLinks.thumbnail || '';
+  thumbnail = thumbnail.replace(/&edge=curl/, '');
 
   // searchInfo properties
   const { textSnippet = '' } = searchInfo;
