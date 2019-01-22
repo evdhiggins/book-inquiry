@@ -6,6 +6,11 @@
 		{#each $items as item}
 		<SearchItem {item} /> {/each}
 	</div>
+	<div class="page-controls">
+		<button on:click="$previousPage()">&larr;</button>
+		&nbsp;{$currentPage}&nbsp;
+		<button on:click="$nextPage()">&rarr;</button>
+	</div>
 </div>
 
 <script>
@@ -21,6 +26,9 @@
   .search-page {
     width: 60%;
     margin-left: 20%;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
   }
 
   .searchbar-container {
@@ -32,6 +40,13 @@
   .results-container {
     display: flex;
     flex-direction: column;
+  }
+
+  .page-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5vh;
+    margin-top: auto;
   }
 
   @media (max-width: 1000px) {

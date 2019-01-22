@@ -1,6 +1,6 @@
 <div class="search-bar">
-	<input class="search-input" type="text" bind:value=searchValue on:keyup="catchEvent(event)" ref:input>
-	<button class="search-button" on:click="$performSearch(searchValue)">
+	<input class="search-input" type="text" bind:value=$searchValue on:keyup="catchEvent(event)" ref:input>
+	<button class="search-button" on:click="$newSearch()">
 		Search
 	</button>
 </div>
@@ -10,17 +10,11 @@
     oncreate() {
       this.refs.input.focus();
     },
-    data() {
-      return {
-        searchValue: ""
-      };
-    },
     methods: {
       catchEvent({ keyCode }) {
         const enterKeyCode = 13;
         if (keyCode === enterKeyCode) {
-          const { searchValue } = this.get();
-          this.store.performSearch(searchValue);
+          this.store.newSearch();
         }
       }
     }
