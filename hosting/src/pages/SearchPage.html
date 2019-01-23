@@ -13,7 +13,8 @@
 	<SearchError />
 	<!-- otherwise -->
 	{:else}
-	<div class="results-container" transition:fade>
+	<div class="results-container"
+	     transition:fade>
 		{#each $items as item}
 		<SearchItem {item} /> {:else}
 		<SearchNoResults /> {/each}

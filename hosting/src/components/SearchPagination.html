@@ -1,8 +1,12 @@
-<BaseButton style="width: 50px;" disabled={!$previousPageExists} on:click="$previousPage()">&larr;</BaseButton>
+<BaseButton style="width: 50px;"
+            disabled={!$previousPageExists}
+            on:click="$previousPage()">&larr;</BaseButton>
 <div class="page-numbers">
 	&nbsp;{$currentPage}&nbsp;
 </div>
-<BaseButton style="width: 50px;" disabled={!$nextPageExists} on:click="$nextPage()">&rarr;</BaseButton>
+<BaseButton style="width: 50px;"
+            disabled={!$nextPageExists}
+            on:click="$nextPage()">&rarr;</BaseButton>
 
 <script>
   export default {

@@ -1,4 +1,7 @@
 {
   "prettier.eslintIntegration": true,
-  "eslint.autoFixOnSave": true
+  "eslint.autoFixOnSave": true,
+  "html.format.wrapLineLength": 80,
+  "html.format.indentHandlebars": true,
+  "html.format.wrapAttributes": "force-aligned"
 }

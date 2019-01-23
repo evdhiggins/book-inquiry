@@ -1,6 +1,13 @@
 <div class="search-bar">
-	<input class="search-input" type="text" bind:value=$searchValue on:keyup="catchEvent(event)" ref:input>
-	<button class="search-button" on:click="$newSearch()" ref:button>
+	<input class="search-input"
+	       type="text"
+	       bind:value=$searchValue
+	       on:keyup="catchEvent(event)"
+	       ref:input>
+
+	<button class="search-button"
+	        on:click="$newSearch()"
+	        ref:button>
 		Search
 	</button>
 </div>
