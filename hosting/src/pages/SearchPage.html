@@ -2,8 +2,11 @@
 	<div class="searchbar-container">
 		<SearchBar />
 	</div>
+	<!-- if error -->
+	{#if $error === true}
+	<SearchError />
 	<!-- if loading -->
-	{#if $loading === true}
+	{:elseif $loading === true}
 	<Spinner />
 	<!-- if not loading -->
 	{:else}
@@ -25,9 +28,10 @@
 <script>
   export default {
     components: {
-      SearchPagination: "../components/SearchPagination.html",
       SearchBar: "../components/SearchBar.html",
+      SearchError: "../components/SearchError.html",
       SearchItem: "../components/SearchItem.html",
+      SearchPagination: "../components/SearchPagination.html",
       Spinner: "../components/Spinner.html"
     }
   };

@@ -30,7 +30,7 @@ class SearchStore extends Store {
   }
 
   async performSearch() {
-    this.set({ loading: true });
+    this.set({ loading: true, error: false });
     const { searchValue, currentIndex } = this.get();
     try {
       const encodedSearchString = encodeURI(searchValue);
@@ -39,11 +39,14 @@ class SearchStore extends Store {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      const { items, totalItems } = await response.json();
+      const { items, totalItems, error } = await response.json();
+      if (error) {
+        throw new Error(error);
+      }
       this.set({ items, totalItems });
     } catch (err) {
       this.resetState();
-      alert(err);
+      this.set({ error: true });
     }
     this.set({ loading: false });
   }
@@ -55,6 +58,7 @@ class SearchStore extends Store {
 
 const store = new SearchStore({
   currentPage: 1,
+  error: false,
   itemsPerRequest: 5,
   items: [],
   loading: false,
