@@ -30,8 +30,8 @@ class SearchStore extends Store {
   }
 
   async performSearch() {
+    this.set({ loading: true });
     const { searchValue, currentIndex } = this.get();
-
     try {
       const encodedSearchString = encodeURI(searchValue);
       const requestUrl = `${baseUrl}search?q=${encodedSearchString}&startIndex=${currentIndex}`;
@@ -45,6 +45,7 @@ class SearchStore extends Store {
       this.resetState();
       alert(err);
     }
+    this.set({ loading: false });
   }
 
   resetState() {
@@ -56,6 +57,7 @@ const store = new SearchStore({
   currentPage: 1,
   itemsPerRequest: 5,
   items: [],
+  loading: false,
   searchValue: '',
   totalItems: 0,
 });

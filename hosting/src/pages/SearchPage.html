@@ -2,15 +2,24 @@
 	<div class="searchbar-container">
 		<SearchBar />
 	</div>
+	<!-- if loading -->
+	{#if $loading === true}
+	<Spinner />
+	<!-- if not loading -->
+	{:else}
 	<div class="results-container">
 		{#each $items as item}
 		<SearchItem {item} /> {/each}
 	</div>
+	<!-- if Items -->
 	{#if $items.length > 0}
 	<div class="page-controls">
 		<SearchPagination />
 	</div>
 	{/if}
+	<!-- end ifItems -->
+	{/if}
+	<!-- end ifNotLoading -->
 </div>
 
 <script>
@@ -18,7 +27,8 @@
     components: {
       SearchPagination: "../components/SearchPagination.html",
       SearchBar: "../components/SearchBar.html",
-      SearchItem: "../components/SearchItem.html"
+      SearchItem: "../components/SearchItem.html",
+      Spinner: "../components/Spinner.html"
     }
   };
 </script>

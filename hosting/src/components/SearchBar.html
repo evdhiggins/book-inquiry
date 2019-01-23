@@ -1,6 +1,6 @@
 <div class="search-bar">
 	<input class="search-input" type="text" bind:value=$searchValue on:keyup="catchEvent(event)" ref:input>
-	<button class="search-button" on:click="$newSearch()">
+	<button class="search-button" on:click="$newSearch()" ref:button>
 		Search
 	</button>
 </div>
@@ -9,6 +9,19 @@
   export default {
     oncreate() {
       this.refs.input.focus();
+      // set search input & button as disabled while loading
+      const listener = this.store.on("state", ({ changed, current }) => {
+        if (changed.loading) {
+          this.refs.input.disabled = current.loading;
+          this.refs.button.disabled = current.loading;
+        }
+      });
+      this.on("destroy", listener.cancel);
+    },
+    computed: {
+      notLoading({ $loading }) {
+        return !$loading;
+      }
     },
     methods: {
       catchEvent({ keyCode }) {
