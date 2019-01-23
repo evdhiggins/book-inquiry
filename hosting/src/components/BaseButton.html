@@ -1,6 +1,17 @@
-<button class="base-button" on:click="fire('click', event)">
-	<slot>{label || ''}</slot>
+<button class="base-button" style={style} on:click="fire('click', event)">
+	<slot>{label}</slot>
 </button>
+
+<script>
+  export default {
+    data() {
+      return {
+        style: "",
+        label: ""
+      };
+    }
+  };
+</script>
 
 <style>
   .base-button {

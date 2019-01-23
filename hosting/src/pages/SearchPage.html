@@ -6,9 +6,11 @@
 		{#each $items as item}
 		<SearchItem {item} /> {/each}
 	</div>
+	{#if $items.length > 0}
 	<div class="page-controls">
 		<SearchPagination />
 	</div>
+	{/if}
 </div>
 
 <script>
