@@ -21,6 +21,7 @@
 <style>
   .search-item {
     text-decoration: none;
+    background-color: #fff;
     color: inherit;
     display: flex;
     border-radius: 3px;
@@ -36,13 +37,16 @@
 
   .search-item:focus {
     outline: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 20, 0.5), 0 4px 5px rgba(0, 0, 20, 0.35),
-      0 5px 3px -4px rgba(0, 0, 20, 0.35);
+    box-shadow: 0 4px 8px rgba(101, 39, 112, 0.5),
+      0 4px 5px rgba(101, 39, 112, 0.35), 0 5px 3px -4px rgba(101, 39, 112, 0.35);
   }
 
   .item-image {
+    align-self: center;
+    text-align: center;
     flex-basis: 25%;
     min-width: 25%;
+    min-height: 15vh;
   }
 
   .item-image > img {

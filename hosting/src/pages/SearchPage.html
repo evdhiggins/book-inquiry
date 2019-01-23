@@ -10,7 +10,7 @@
 	<Spinner />
 	<!-- if not loading -->
 	{:else}
-	<div class="results-container">
+	<div class="results-container" transition:fade>
 		{#each $items as item}
 		<SearchItem {item} /> {/each}
 	</div>
@@ -26,7 +26,11 @@
 </div>
 
 <script>
+  import { fade } from "svelte-transitions";
   export default {
+    transitions: {
+      fade
+    },
     components: {
       SearchBar: "../components/SearchBar.html",
       SearchError: "../components/SearchError.html",
@@ -55,12 +59,13 @@
   .results-container {
     display: flex;
     flex-direction: column;
+    margin-bottom: 4vh;
   }
 
   .page-controls {
     display: flex;
     justify-content: center;
-    margin-bottom: 5vh;
+    margin-bottom: 4vh;
     margin-top: auto;
   }
 
