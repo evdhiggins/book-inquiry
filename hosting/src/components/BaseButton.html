@@ -1,4 +1,4 @@
-<button class="base-button" style={style} on:click="fire('click', event)">
+<button class="base-button" style={style} on:click="fire('click', event)" ref:button>
 	<slot>{label}</slot>
 </button>
 
@@ -6,9 +6,15 @@
   export default {
     data() {
       return {
+        disabled: false,
         style: "",
         label: ""
       };
+    },
+    onupdate({ changed, current }) {
+      if (changed.disabled) {
+        this.refs.button.disabled = current.disabled;
+      }
     }
   };
 </script>
