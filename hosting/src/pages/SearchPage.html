@@ -7,15 +7,16 @@
 		<SearchItem {item} /> {/each}
 	</div>
 	<div class="page-controls">
-		<button on:click="$previousPage()">&larr;</button>
+		<BaseButton on:click="$previousPage()">&larr;</BaseButton>
 		&nbsp;{$currentPage}&nbsp;
-		<button on:click="$nextPage()">&rarr;</button>
+		<BaseButton on:click="$nextPage()">&rarr;</BaseButton>
 	</div>
 </div>
 
 <script>
   export default {
     components: {
+      BaseButton: "../components/BaseButton.html",
       SearchBar: "../components/SearchBar.html",
       SearchItem: "../components/SearchItem.html"
     }
