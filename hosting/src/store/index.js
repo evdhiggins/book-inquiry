@@ -43,12 +43,12 @@ class SearchStore extends Store {
       if (error) {
         throw new Error(error);
       }
-      this.set({ items, totalItems });
+      this.set({ items, totalItems, lastSearch: searchValue });
     } catch (err) {
       this.resetState();
       this.set({ error: true });
     }
-    this.set({ loading: false });
+    this.set({ loading: false, firstLoad: false });
   }
 
   resetState() {
@@ -59,8 +59,10 @@ class SearchStore extends Store {
 const store = new SearchStore({
   currentPage: 1,
   error: false,
+  firstLoad: true,
   itemsPerRequest: 5,
   items: [],
+  lastSearch: '',
   loading: false,
   searchValue: '',
   totalItems: 0,
