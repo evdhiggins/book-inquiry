@@ -1,31 +1,11 @@
-<div class="search-error">
-	<div class="error-icon">
-		&#9785;
-	</div>
-	<div class="error-title">
-		Woops, an error occurred!
-	</div>
-	<div class="error-description">
-		An error occurred when attempting to load the search results. Please try again later.
-	</div>
-</div>
-
-<style>
-  .search-error {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    justify-content: center;
-    height: 40vh;
-    color: #555;
-  }
-  .error-icon {
-    font-size: 6rem;
-  }
-  .error-title {
-    font-size: 1.5rem;
-  }
-  .error-description {
-    font-size: 1rem;
-  }
-</style>
+<BaseInfoText icon="&#9785;"
+              title="Woops, an error occurred!"
+              description="An error occurred when attempting to load the search results. Please try again later."
+/>
+<script>
+  export default {
+    components: {
+      BaseInfoText: "./BaseInfoText.html"
+    }
+  };
+</script>

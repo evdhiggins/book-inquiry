@@ -1,0 +1,47 @@
+<div class="base-info-text">
+	<div class="info-icon">
+		<slot name="icon">
+			{icon}
+		</slot>
+	</div>
+	<div class="info-title">
+		<slot name="title">
+			{title}
+		</slot>
+	</div>
+	<div class="info-description">
+		<slot name="description">
+			{description}
+		</slot>
+	</div>
+</div>
+<script>
+  export default {
+    data() {
+      return {
+        icon: "",
+        title: "",
+        description: ""
+      };
+    }
+  };
+</script>
+<style>
+  .base-info-text {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    height: 40vh;
+    color: #555;
+  }
+  .info-icon {
+    font-size: 6rem;
+  }
+  .info-title {
+    font-size: 1.5rem;
+  }
+  .info-description {
+    font-size: 1rem;
+  }
+</style>

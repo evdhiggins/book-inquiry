@@ -1,29 +1,10 @@
-<div class="search-welcome">
-	<div class="welcome-title">
-		Welcome!
-	</div>
-	<div class="welcome-description">
-		Use the search-bar above to search for books. Selecting any of the results will open
-		a new browser tab with more information about the selected item.
-	</div>
-</div>
-
-<style>
-  .search-welcome {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    justify-content: center;
-    height: 40vh;
-    color: #555;
-  }
-  .welcome-icon {
-    font-size: 8rem;
-  }
-  .welcome-title {
-    font-size: 1.5rem;
-  }
-  .welcome-description {
-    font-size: 1rem;
-  }
-</style>
+<BaseInfoText title="Welcome!"
+              description="Use the search-bar above to search for books. Selecting any of the results will open
+		a new browser tab with more information about the selected item." />
+<script>
+  export default {
+    components: {
+      BaseInfoText: "./BaseInfoText.html"
+    }
+  };
+</script>
