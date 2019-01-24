@@ -1,4 +1,5 @@
-<div class="base-info-text">
+<div class="base-info-text"
+     in:fade>
 	<div class="info-icon">
 		<slot name="icon">
 			{icon}
@@ -16,7 +17,9 @@
 	</div>
 </div>
 <script>
+  import { fade } from "svelte-transitions";
   export default {
+    transitions: { fade },
     data() {
       return {
         icon: "",

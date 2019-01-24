@@ -23,7 +23,7 @@ export default {
     }),
     svelte({
       // skip transitions on first load
-      skipIntroByDefault: true,
+      skipIntroByDefault: false,
       nestedTransitions: true,
 
       // enable run-time checks when not in production

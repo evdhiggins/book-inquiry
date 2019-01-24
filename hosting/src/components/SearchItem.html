@@ -1,4 +1,5 @@
 <a class="search-item"
+   in:fade
    href={item.infoLink}
    target="_blank">
 	<div class="item-image">
@@ -20,7 +21,12 @@
 		{/if}
 	</div>
 </a>
-
+<script>
+  import { fade } from "svelte-transitions";
+  export default {
+    transitions: { fade }
+  };
+</script>
 <style>
   .search-item {
     text-decoration: none;
