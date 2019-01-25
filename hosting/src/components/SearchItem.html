@@ -8,12 +8,12 @@
 	</div>
 	<div class="item-main">
 		<div class="item-title single-line">
-			{item.title}
+			{item.title}&nbsp;
 		</div>
 		<div class="item-subtitle single-line">
-			{item.authors}
+			{item.authors}&nbsp;
 		</div>
-		<div class="item-snippet">{item.description}</div>
+		<div class="item-description">{item.description}</div>
 		{#if item.publisher}
 		<div class="item-publisher single-line">
 			Published by {item.publisher}
@@ -37,6 +37,7 @@
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14),
       0 3px 1px -2px rgba(0, 0, 0, 0.12);
     margin-bottom: 2vh;
+    height: 30vh;
   }
 
   .search-item:hover {
@@ -54,14 +55,14 @@
     align-self: center;
     text-align: center;
     flex-basis: 25%;
-    min-width: 25%;
     min-height: 15vh;
   }
 
   .item-image > img {
-    width: 100%;
-    height: auto;
-    border-radius: 3px 0px 0px 3px;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    border-radius: 3px 3px 3px 3px;
     margin-bottom: -4px;
   }
 
@@ -83,6 +84,12 @@
     margin-bottom: 1vh;
   }
 
+  .item-description {
+    height: 12vh;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .item-publisher {
     color: #999;
     margin-top: 2vh;
@@ -102,8 +109,11 @@
   }
 
   @media (max-width: 600px) {
-    .item-snippet {
-      display: none;
+    .item-description {
+      max-height: 4em;
+    }
+    .search-item {
+      max-height: 25vh;
     }
     .single-line {
       max-width: 65vw;
