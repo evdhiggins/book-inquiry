@@ -159,4 +159,9 @@ describe('prepareItem', () => {
     const preparedItem = prepareItem({ searchInfo: { textSnippet: '%E5%A4%A9%E6%98%8E' } });
     expect(preparedItem.description).toBe('天明');
   });
+
+  test('Return un-decoded URI string if it is malformed', () => {
+    const preparedItem = prepareItem({ volumeInfo: { description: 'Malformed: %E0%A4%A' } });
+    expect(preparedItem.description).toBe('Malformed: %E0%A4%A');
+  });
 });

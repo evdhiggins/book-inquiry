@@ -80,8 +80,18 @@ exports.prepareItem = (apiItem = {}) => {
   // searchInfo properties
   const { textSnippet = '' } = searchInfo;
 
-  // parse any encoded URI codes in text and remove html tags
-  description = decodeURI(description || textSnippet).replace(/<.*?>/g, '');
+  description = description || textSnippet;
+
+  try {
+    // some of the item descriptions contain URI encoded strings
+    description = decodeURI(description);
+  } catch (_) {
+    // do nothing if there is an error decoding the URI
+  }
+
+  // remove any html tags in description
+  // this is for presentation and not security, so a simple regexp is fine
+  description = description.replace(/<.*?>/g, '');
 
   return {
     id,
