@@ -1,5 +1,6 @@
 {
   "search": {
     "key": "API_KEY"
-  }
+  },
+  "env": "dev|prod"
 }
