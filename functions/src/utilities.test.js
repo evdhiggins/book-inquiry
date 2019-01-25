@@ -26,10 +26,17 @@ describe('createSearchUrl', () => {
     expect(callWithQAs('صالح')).not.toThrow();
   });
 
-  test('Correctly parse `q` input', () => {
+  test('Return basic `q` values properly in query string', () => {
     expect(csu({ q: 'test' }, 'k')).toMatch(/q=test/);
-    expect(csu({ q: 'a test' }, 'k')).toMatch(/q=a test/);
-    expect(csu({ q: '!@#$%^&*()<>?' }, 'k')).toMatch(/!@#\$%\^&\*\(\)<>\?/);
+    expect(csu({ q: 'a test' }, 'k')).toMatch(/q=a%20test/);
+  });
+
+  test('Convert `q` input containing special characters to URI-safe strings', () => {
+    expect(csu({ q: '!@#$%^&*()<>?' }, 'k')).toMatch(/!@#\$%25%5E&\*\(\)%3C%3E\?/);
+    expect(csu({ q: '一本好书' }, 'k')).toMatch(/q=%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/);
+    expect(csu({ q: '🐶🐱🐭🐹🐰' }, 'k')).toMatch(
+      /q=%F0%9F%90%B6%F0%9F%90%B1%F0%9F%90%AD%F0%9F%90%B9%F0%9F%90%B0/,
+    );
   });
 
   test('Correctly parse `startIndex` input', () => {

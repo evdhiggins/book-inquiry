@@ -35,7 +35,7 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   url += `&fields=${fields.join(',')}`;
   url += `&key=${key}`;
 
-  return url;
+  return encodeURI(url);
 };
 
 // fetch and parse data from a json endpoint
