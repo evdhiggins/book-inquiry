@@ -25,8 +25,11 @@ class SearchStore extends Store {
   }
 
   newSearch() {
-    this.resetState();
-    this.performSearch();
+    const { searchValue } = this.get();
+    if (searchValue !== '') {
+      this.resetState();
+      this.performSearch();
+    }
   }
 
   async performSearch() {
