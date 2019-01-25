@@ -1,5 +1,5 @@
 const functions = require('firebase-functions');
-const { createSearchUrl, fetch, prepareItem } = require('./utilities');
+const { createSearchUrl, fetch, prepareItem } = require('../utilities');
 
 exports.search = async (req, res) => {
   try {

@@ -3,6 +3,9 @@
 <script>
 	import store from "./store/index";
 	export default {
+	  oncreate() {
+	    this.store.pokeServer();
+	  },
 	  components: {
 	    SearchPage: "./pages/SearchPage.html"
 	  },

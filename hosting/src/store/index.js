@@ -57,6 +57,15 @@ class SearchStore extends Store {
   resetState() {
     this.set({ items: [], totalItems: 0, currentPage: 1 });
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  async pokeServer() {
+    try {
+      await fetch(`${baseUrl}poke`);
+    } catch (e) {
+      // do nothing if poke call fails
+    }
+  }
 }
 
 const store = new SearchStore({
