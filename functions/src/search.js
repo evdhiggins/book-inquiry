@@ -9,7 +9,11 @@ exports.search = async (req, res) => {
       console.error(results.error);
       throw new Error('API request error');
     }
-    results.items = results.items.map(prepareItem);
+    if (Array.isArray(results.items)) {
+      results.items = results.items.map(prepareItem);
+    } else {
+      results.items = [];
+    }
     res.send(results);
   } catch (e) {
     // log the error to StackDriver
