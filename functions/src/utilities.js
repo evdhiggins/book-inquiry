@@ -21,6 +21,7 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
     // start volumeInfo
     'items/volumeInfo(title',
     'authors',
+    'description',
     'publisher',
     'imageLinks/thumbnail',
     'infoLink)',
@@ -68,7 +69,7 @@ exports.prepareItem = (apiItem = {}) => {
   // volumeInfo properties
   const { title = '', publisher = '', imageLinks = {} } = volumeInfo;
 
-  let { authors = [], infoLink = '' } = volumeInfo;
+  let { authors = [], infoLink = '', description = '' } = volumeInfo;
   authors = authors.join(', ');
   infoLink = infoLink.replace(/^http:/, 'https:');
 
@@ -79,13 +80,16 @@ exports.prepareItem = (apiItem = {}) => {
   // searchInfo properties
   const { textSnippet = '' } = searchInfo;
 
+  // parse any encoded URI codes in text and remove html tags
+  description = decodeURI(description || textSnippet).replace(/<.*?>/g, '');
+
   return {
     id,
+    description,
     title,
     authors,
     publisher,
     thumbnail,
     infoLink,
-    textSnippet,
   };
 };

@@ -77,6 +77,9 @@ describe('prepareItem', () => {
       title: 'Unruly Examples',
       authors: ['Alexander Gelley', 'A Fake Author'],
       publisher: 'Stanford University Press',
+      description:
+        "These 2 essays demonstrate that, beyond example's rich genealogy in the rhetorical tradition, it involves issues that are central to current theories of meaning and ethics in literature and philosophy.",
+
       imageLinks: {
         thumbnail:
           'http://books.google.com/books/content?id=BEQcj-aFTYYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
@@ -92,12 +95,12 @@ describe('prepareItem', () => {
     id: 'BEQcj-aFTYYC',
     title: 'Unruly Examples',
     authors: 'Alexander Gelley, A Fake Author',
+    description:
+      "These 2 essays demonstrate that, beyond example's rich genealogy in the rhetorical tradition, it involves issues that are central to current theories of meaning and ethics in literature and philosophy.",
     publisher: 'Stanford University Press',
     thumbnail:
       'https://books.google.com/books/content?id=BEQcj-aFTYYC&printsec=frontcover&img=1&zoom=1&source=gbs_api',
     infoLink: 'https://books.google.com/books?id=BEQcj-aFTYYC&dq=examples&hl=&source=gbs_api',
-    textSnippet:
-      'These 2 essays demonstrate that, beyond example&#39;s rich genealogy in the rhetorical tradition, it involves issues that are central to current theories of meaning and ethics in literature and philosophy.',
   };
 
   test('Return an object', () => {
@@ -140,5 +143,20 @@ describe('prepareItem', () => {
         expect(preparedItem[key]).toBe('');
       });
     });
+  });
+
+  test('Return `textSnippet` as `description` if no `description` exists', () => {
+    const preparedItem = prepareItem({ searchInfo: { textSnippet: 'snippet' } });
+    expect(preparedItem.description).toBe('snippet');
+  });
+
+  test('Remove html tags from description', () => {
+    const preparedItem = prepareItem({ volumeInfo: { description: '<bold>description</bold>' } });
+    expect(preparedItem.description).toBe('description');
+  });
+
+  test('Decode URI encoded strings', () => {
+    const preparedItem = prepareItem({ searchInfo: { textSnippet: '%E5%A4%A9%E6%98%8E' } });
+    expect(preparedItem.description).toBe('天明');
   });
 });
