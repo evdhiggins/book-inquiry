@@ -32,6 +32,7 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   url += `q=${q}`;
   url += `&startIndex=${index}`;
   url += '&country=US';
+  url += '&maxResults=20';
   url += `&fields=${fields.join(',')}`;
   url += `&key=${key}`;
 

@@ -63,7 +63,7 @@ const store = new SearchStore({
   currentPage: 1,
   error: false,
   firstLoad: true,
-  itemsPerRequest: 5,
+  itemsPerRequest: 20,
   items: [],
   lastSearch: '',
   loading: false,
