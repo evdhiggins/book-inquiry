@@ -6,7 +6,8 @@ exports.search = async (req, res) => {
     const url = createSearchUrl(req.query, functions.config().search.key);
     const results = await fetch(url);
     if (results.error) {
-      throw new Error(results.error);
+      console.error(results.error);
+      throw new Error('API request error');
     }
     results.items = results.items.map(prepareItem);
     res.send(results);

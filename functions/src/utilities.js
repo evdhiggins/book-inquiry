@@ -31,7 +31,7 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   let url = 'https://www.googleapis.com/books/v1/volumes?';
   url += `q=${q}`;
   url += `&startIndex=${index}`;
-  url += '&maxResults=5';
+  url += '&country=US';
   url += `&fields=${fields.join(',')}`;
   url += `&key=${key}`;
 
