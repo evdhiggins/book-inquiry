@@ -3,13 +3,11 @@
  * tests will run without any additional configuration or pre-processing
  */
 
-// the current index of the first item in the items array
-// as it exists in the total number of results available
+// the current starting index for items in api requests
 exports.currentIndex = (currentPage, itemsPerRequest) => {
-  const invalidCurrentPage = !(Number(currentPage) > 0);
-  const invalidItemsPerRequest = !(Number(itemsPerRequest) > 0);
+  const isValidNumber = numValue => Number(numValue) > 0;
 
-  if (invalidCurrentPage || invalidItemsPerRequest) {
+  if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
     return 0;
   }
 
