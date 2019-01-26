@@ -26,9 +26,12 @@ class SearchStore extends Store {
 
   newSearch() {
     const { searchValue } = this.get();
-    if (searchValue !== '') {
+    if (searchValue.trim() !== '') {
       this.resetState();
       this.performSearch();
+    }
+    if (searchValue !== '') {
+      this.set({ items: [], lastSearch: searchValue, firstLoad: false });
     }
   }
 
