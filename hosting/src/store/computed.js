@@ -11,7 +11,7 @@ exports.currentIndex = (currentPage, itemsPerRequest) => {
     return 0;
   }
 
-  return currentPage * itemsPerRequest;
+  return (currentPage - 1) * itemsPerRequest;
 };
 
 exports.nextPageExists = (itemsPerRequest, totalItems, currentPage) => {

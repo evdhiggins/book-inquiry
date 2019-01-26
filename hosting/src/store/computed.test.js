@@ -2,8 +2,8 @@ const { nextPageExists, currentIndex, previousPageExists } = require('./computed
 
 describe('currentIndex', () => {
   test('Return the index of the next item', () => {
-    expect(currentIndex(1, 5)).toBe(5);
-    expect(currentIndex(5, 10)).toBe(50);
+    expect(currentIndex(1, 5)).toBe(0);
+    expect(currentIndex(5, 10)).toBe(40);
   });
 
   test('Return `0` when either input is NaN or negative', () => {
