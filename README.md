@@ -1,8 +1,8 @@
 # Book Inquiry
 
-_Book Inquiry_ is a simple Javascript application used to search for books via the Google Books API. Each request returns 20 books, and the user can use pagination controls to view additional search results.
+_Book Inquiry_ is a simple Javascript application used to search for books via the Google Books API. Each request returns up to 20 books, and the user can use pagination controls to view additional search results.
 
-The application is built to be hosted in Firebase with the server-side logic performed via Firebase Functions. The UI is built with [Svelte](https://svelte.technology/), while the functions use [Express](https://expressjs.com/).
+The application is built to be hosted in Firebase with the server-side logic performed via Firebase Functions. The UI is built with [Svelte](https://svelte.technology/), while the functions use [Express](https://expressjs.com/). Tests are performed with [Jest](https://jestjs.io/).
 
 A running example of _Book Inquiry_ can be found here: https://book-inquiry.firebaseapp.com
 
@@ -10,13 +10,13 @@ A running example of _Book Inquiry_ can be found here: https://book-inquiry.fire
 
 ### Planning
 
-Initially I wanted to write the application to be entirely self-contained in the browser, with all API requests made directly to the Google Books API. At the same time, I also wanted to use an API key so that the limit of requests per day would be increased (perhaps this was an unjustified concern for the scope of this application). In the end, I chose a JAMstack approach with Firebase used as the hosting platform.
+Initially I wanted to write the application to be entirely self-contained in the browser, with all API requests made directly to the Google Books API. At the same time, I also wanted to increase the number of API requests available per day by using an API key (perhaps this was an unjustified concern for the scope of this application). In the end, I chose a JAMstack approach with Firebase used as the hosting platform.
 
-I prepared a basic drawn outline of how I envisioned the search page to be structured, and reviewed the Google Books API documentation to get a grasp on the available parameters.
+I then prepared a basic outline of how I envisioned the search page to be structured, and reviewed the Google Books API documentation to get a grasp on the available parameters.
 
 #### Why Svelte?
 
-Other frameworks (my experience mostly being with Vue) bring more power and size than what felt necessary for this application. I have also grown very fond of the clean separation within front-end development offered by single-file components. Svelte supports single-file components with scoped styles and it builds down to plain JS. I had been eyeing Svelte for some time, and this seemed like the perfect opportunity to try it out!
+Other frameworks (my experience mostly being with Vue) bring more power and size than what I felt was necessary for this application. I also wanted to create this application using single-file components, as I have grown very fond of the clean composition separation that they provide. Svelte leverages single-file components with scoped styles and it builds down to plain JS. I had been eyeing Svelte for some time, and this seemed like the perfect opportunity to try it out!
 
 #### Why Express?
 
@@ -26,25 +26,25 @@ Firebase Functions use Express for HTTP request routing by default. I wanted to 
 
 #### The process
 
-Most of the application logic and data-processing was written in a TDD style. The UI layer was incrementally built to match and evolve from the initial outline. Components were split and functions were decoupled as possibilities of future pain became apparent.
+Most of the application logic and data-processing was written in a TDD style. The UI layer was incrementally built to match and evolve from the initial outline. Components and functions were split and as possibilities of future pain became apparent.
 
-The UI components were built to be as "dumb" as possible, with all client-side logic being handled in the state management system and all data logic being performed on the server. I decoupled the domain-specific item verbiage from Google Books and the rendering components (the UI doesn't need to know about `item.volumeInfo.imageLinks.thumbnail` — `item.thumbnail` should be all it needs!).
+The UI components were built to be as "dumb" as possible, with all client-side logic being handled in the state management store and all data logic being performed on the server. The domain-specific item verbiage from Google Books was decoupled from the rendering components (the UI doesn't need to know about `item.volumeInfo.imageLinks.thumbnail` — `item.thumbnail` should be all it needs!).
 
 #### Some difficulties
 
 ##### Location Error
 
-When first deploying the application to Firebase, after only running it locally, the search was returning an error. In StackDriver error logs all that was visible was `Error: [object Object]`. After digging deeper I realized that I was manually throwing any errors received from `https` requests, which were actually plain JS objects and not `Error` instances. (`err.toString()` returns the `message` property from the error, whereas `({}).toString()` returns `[object Object]`)
+When first deploying the application to Firebase, after only running it locally, the search was returning an error. All that could be found in the StackDriver error logs was `Error: [object Object]`. After digging deeper I realized that I was manually throwing any errors received from `https` requests, which were actually plain JS objects and not `Error` instances. (`err.toString()` returns the `message` property from the error, whereas `({}).toString()` returns `[object Object]`)
 
 The actual `https` error was due to the Google API not being able to attribute a location to each API request from the production server, so I had to manually attribute each request with a two-letter country code.
 
 ##### Deployment confusion
 
-The default rollup.js configuration with Svelte outputs the development files and the production files into the same directory. It took me more time than I'm proud of to realize this, as running the build & deploy scripts while the dev server is running caused for the development version to be deployed. Much time was spent scrutinizing the codebase before this was realized.
+The default rollup.js configuration with Svelte outputs the development files and the production files into the same directory. Running the build & deploy scripts while the dev server was running caused the development version to be deployed into production. It took me more time than I'm proud of to figure out the root of the issue.
 
 ### Looking forward
 
-While _Book Inquiry_ can perform basic searches and properly handle many edge cases, it has many opportunities for improvement. Some of these opportunities include:
+While _Book Inquiry_ can perform basic searches and properly handle many edge cases, it has plenty of opportunities for improvement. Some of these opportunities include:
 
 - Javascript
   - Improve search string processing to better support search modifiers
@@ -115,4 +115,4 @@ npm run dev
 firebase deploy
 ```
 
-The deployment is done through `firebase-tools`. This requires that you have `firebase-tools` installed globally and also requires that you have logged in with an authorized Google account. You will likely need to edit the `.firebaserc` file to point to a project for which you have editing privileges.
+The deployment is done through `firebase-tools`. This requires that `firebase-tools` is installed globally and a user has logged in. The `.firebaserc` file will need to be edited to point reference a project for which the current user has editing privileges.
