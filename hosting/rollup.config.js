@@ -16,7 +16,7 @@ export default {
   },
   plugins: [
     replace({
-      include: './src/store/index.js',
+      include: ['./src/store/index.js', './src/store/ItemStore.js'],
       values: {
         ENVIRONMENT: production ? 'prod' : 'dev',
       },
