@@ -4,28 +4,15 @@
  */
 
 // the current starting index for items in api requests
-exports.currentIndex = (currentPage, itemsPerRequest) => {
+exports.currentIndex = (paginationState, itemsPerRequest) => {
   const isValidNumber = numValue => Number(numValue) > 0;
 
-  if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
+  if (!isValidNumber(paginationState.currentPage) || !isValidNumber(itemsPerRequest)) {
     return 0;
   }
 
-  return (currentPage - 1) * itemsPerRequest;
+  return (paginationState.currentPage - 1) * itemsPerRequest;
 };
-
-exports.nextPageExists = (itemsPerRequest, totalItems, currentPage) => {
-  const perRequest = Number(itemsPerRequest) > 0 ? itemsPerRequest : 0;
-  const items = Number(itemsPerRequest) > 0 ? totalItems : 0;
-
-  const totalPageCount = Math.floor(items / perRequest);
-  if (totalPageCount > currentPage) {
-    return true;
-  }
-  return false;
-};
-
-exports.previousPageExists = currentPage => currentPage > 1;
 
 /**
  * Computed functions are loaded into the store via the following arguments:
@@ -34,7 +21,5 @@ exports.previousPageExists = currentPage => currentPage > 1;
  * [2]: the function that returns the computed value
  */
 exports.computedFunctions = [
-  ['currentIndex', ['currentPage', 'itemsPerRequest'], exports.currentIndex],
-  ['nextPageExists', ['itemsPerRequest', 'totalItems', 'currentPage'], exports.nextPageExists],
-  ['previousPageExists', ['currentPage'], exports.previousPageExists],
+  ['currentIndex', ['paginationState', 'itemsPerRequest'], exports.currentIndex],
 ];

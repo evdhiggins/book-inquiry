@@ -1,11 +1,11 @@
 <BaseButton style="width: 50px;"
-            disabled={!$previousPageExists}
+            disabled={!$paginationState.previousPageExists}
             on:click="$previousPage()">&larr;</BaseButton>
 <div class="page-numbers">
-	&nbsp;{$currentPage}&nbsp;
+	&nbsp;{$paginationState.currentPage}&nbsp;
 </div>
 <BaseButton style="width: 50px;"
-            disabled={!$nextPageExists}
+            disabled={!$paginationState.nextPageExists}
             on:click="$nextPage()">&rarr;</BaseButton>
 
 <script>

@@ -1,5 +1,6 @@
 import { Store } from 'svelte/store';
 import { ItemStore } from './ItemStore';
+import { PaginationStore } from './PaginationStore';
 import { computedFunctions } from './computed';
 
 // ENVIRONMENT is replaced with 'dev' / 'prod' on serve / build
@@ -9,34 +10,35 @@ const baseUrl = 'ENVIRONMENT' === 'dev'
   : 'https://us-central1-book-inquiry.cloudfunctions.net/api/';
 
 class SearchStore extends Store {
-  constructor(storeState, { itemStore }) {
+  constructor(storeState, { itemStore, paginationStore }) {
     super(storeState);
     this._itemStore = itemStore;
+    this._paginationStore = paginationStore;
   }
 
   nextPage() {
-    const { currentPage, nextPageExists } = this.get();
-    if (nextPageExists) {
-      this.set({ currentPage: currentPage + 1 });
-      this.performSearch();
-    }
+    const { paginationState } = this._paginationStore.nextPage();
+    this.set({ paginationState });
+    this.performSearch();
   }
 
   previousPage() {
-    const { currentPage, previousPageExists } = this.get();
-    if (previousPageExists) {
-      this.set({ currentPage: currentPage - 1 });
-      this.performSearch();
-    }
+    const { paginationState } = this._paginationStore.previousPage();
+    this.set({ paginationState });
+    this.performSearch();
   }
 
-  newSearch() {
+  async newSearch() {
     const { searchValue } = this.get();
     if (searchValue.trim() !== '') {
-      this.resetState();
-      this.performSearch();
-    }
-    if (searchValue !== '') {
+      this.resetUiState();
+      await this.performSearch();
+
+      // reset pagination state to the first page with the new totalItems #
+      const storeState = this.get();
+      const { paginationState } = this._paginationStore.reset(storeState);
+      this.set({ paginationState });
+    } else if (searchValue !== '') {
       this.set({ items: [], lastSearch: searchValue, firstLoad: false });
     }
   }
@@ -53,7 +55,7 @@ class SearchStore extends Store {
     });
   }
 
-  resetState() {
+  resetUiState() {
     this.set({ items: [], totalItems: 0, currentPage: 1 });
   }
 
@@ -68,7 +70,11 @@ class SearchStore extends Store {
 }
 
 const initialState = {
-  currentPage: 1,
+  paginationState: {
+    currentPage: 1,
+    nextPageExists: false,
+    previousPageExists: false,
+  },
   error: false,
   firstLoad: true,
   itemsPerRequest: 20,
@@ -79,9 +85,11 @@ const initialState = {
   totalItems: 0,
 };
 
+// create sub-stores
 const itemStore = new ItemStore(fetch);
+const paginationStore = new PaginationStore(initialState);
 
-const store = new SearchStore(initialState, { itemStore });
+const store = new SearchStore(initialState, { itemStore, paginationStore });
 
 // add all computed values defined in ./computed.js
 computedFunctions.forEach((computeArgs) => {
