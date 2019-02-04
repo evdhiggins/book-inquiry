@@ -1,4 +1,6 @@
-class PaginationStore {
+const { StoreModule } = require('./StoreModule');
+
+class PaginationStore extends StoreModule {
   /**
    * The current state of `PaginationStore`
    */
@@ -15,8 +17,12 @@ class PaginationStore {
    * in the application
    * @param {any} storeState The state object of the UI store
    */
-  constructor(storeState) {
-    this.reset(storeState);
+  constructor(storeFunctions) {
+    super(storeFunctions);
+    this._currentPage = 1;
+    this._itemsPerRequest = 1;
+    this._totalItems = 0;
+    this._toatlPages = 0;
   }
 
   /**
@@ -28,6 +34,7 @@ class PaginationStore {
     this._itemsPerRequest = Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1;
     this._totalItems = Number(totalItems) > 0 ? Number(totalItems) : 0;
     this._totalPages = Math.ceil(this._totalItems / this._itemsPerRequest);
+    this._updateState();
     return this;
   }
 
@@ -38,6 +45,7 @@ class PaginationStore {
     if (this._nextPageExists()) {
       this._currentPage += 1;
     }
+    this._updateState();
     return this;
   }
 
@@ -48,6 +56,7 @@ class PaginationStore {
     if (this._previousPageExists()) {
       this._currentPage -= 1;
     }
+    this._updateState();
     return this;
   }
 
@@ -57,6 +66,14 @@ class PaginationStore {
 
   _previousPageExists() {
     return this._currentPage > 1;
+  }
+
+  /**
+   * Updates the UI store via the scoped set function received
+   * when PaginationStore was initialized
+   */
+  _updateState() {
+    this.set(this.paginationState);
   }
 }
 

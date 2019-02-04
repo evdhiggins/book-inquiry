@@ -6,7 +6,7 @@
 	       ref:input>
 
 	<BaseButton style="width: 100px; margin: 0px 0px 0px -100px;"
-	            on:click="$newSearch()"
+	            on:click="$dispatch('newSearch')"
 	            disabled={$loading}>
 		Search
 	</BaseButton>
@@ -31,7 +31,7 @@
       catchEvent({ keyCode }) {
         const enterKeyCode = 13;
         if (keyCode === enterKeyCode) {
-          this.store.newSearch();
+          this.store.dispatch("newSearch");
         }
       }
     }

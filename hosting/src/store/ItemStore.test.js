@@ -1,4 +1,5 @@
 const { ItemStore } = require('./ItemStore');
+const { storeFunctions } = require('./__mocks__/index');
 
 // eslint-disable-next-line no-unused-vars
 const fetchMockFactory = (httpError = false, serverError = false) => jest.fn(async url => ({
@@ -15,7 +16,7 @@ const httpErrorFetchMock = fetchMockFactory(true);
 const serverErrorFetchMock = fetchMockFactory(false, true);
 
 const callGetItemsWith = (fetch, searchValue, currentIndex) => () => {
-  const itemStore = new ItemStore(fetch);
+  const itemStore = new ItemStore(storeFunctions, fetch);
   return itemStore.getItems({ searchValue, currentIndex });
 };
 
@@ -24,7 +25,7 @@ const storeStateMock = { searchValue: 'foo', currentIndex: 0 };
 describe('getItems', () => {
   test('Return an object that contains `error`, `items`, and `totalItems`', async () => {
     expect.assertions(4);
-    const itemStore = new ItemStore(fetchMock);
+    const itemStore = new ItemStore(storeFunctions, fetchMock);
     const response = await itemStore.getItems({ searchValue: 'foo', currentIndex: 0 });
 
     expect(typeof response).toBe('object');
@@ -72,7 +73,7 @@ describe('getItems', () => {
   test('Call `fetch` once', async () => {
     expect.assertions(1);
     const fetch = fetchMockFactory();
-    const itemStore = new ItemStore(fetch);
+    const itemStore = new ItemStore(storeFunctions, fetch);
     await itemStore.getItems(storeStateMock);
     expect(fetch.mock.calls.length).toBe(1);
   });
@@ -80,7 +81,7 @@ describe('getItems', () => {
   test('Call `fetch` with a url as an argument', async () => {
     expect.assertions(1);
     const fetch = fetchMockFactory();
-    const itemStore = new ItemStore(fetch);
+    const itemStore = new ItemStore(storeFunctions, fetch);
     await itemStore.getItems(storeStateMock);
 
     // RegExp taken from https://stackoverflow.com/a/3809435
@@ -91,7 +92,7 @@ describe('getItems', () => {
   test('Call `fetch` with URI-encoded `searchValue`', async () => {
     expect.assertions(1);
     const fetch = fetchMockFactory();
-    const itemStore = new ItemStore(fetch);
+    const itemStore = new ItemStore(storeFunctions, fetch);
     await itemStore.getItems({ searchValue: 'a bit of string', currentIndex: 0 });
 
     expect(fetch.mock.calls[0][0]).toMatch(/q=a%20bit%20of%20string/);
@@ -100,7 +101,7 @@ describe('getItems', () => {
   test('Call `fetch` with correct `currentIndex` value', async () => {
     expect.assertions(1);
     const fetch = fetchMockFactory();
-    const itemStore = new ItemStore(fetch);
+    const itemStore = new ItemStore(storeFunctions, fetch);
     await itemStore.getItems({ searchValue: 'foo', currentIndex: 20 });
 
     expect(fetch.mock.calls[0][0]).toMatch(/startIndex=20/);

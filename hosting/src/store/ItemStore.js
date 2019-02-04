@@ -1,11 +1,14 @@
+const { StoreModule } = require('./StoreModule');
+
 // ENVIRONMENT is replaced with 'dev' / 'prod' on serve / build
 // eslint-disable-next-line no-constant-condition
 const baseUrl = 'ENVIRONMENT' === 'dev'
   ? 'http://localhost:5000/book-inquiry/us-central1/api/'
   : 'https://us-central1-book-inquiry.cloudfunctions.net/api/';
 
-class ItemStore {
-  constructor(fetch) {
+class ItemStore extends StoreModule {
+  constructor(storeFunctions, fetch) {
+    super(storeFunctions);
     // wrap `fetch` to avoid changing `fetch`'s context of `this`
     const fetchWrapper = (...args) => fetch(...args);
     this._fetch = fetchWrapper;
