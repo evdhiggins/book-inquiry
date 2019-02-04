@@ -1,13 +1,8 @@
 import StoreRoot from './StoreRoot';
 import { ItemsModule } from './modules/Items';
 import { PaginationModule } from './modules/Pagination';
+import { PokeModule } from './modules/Poke';
 import { computedFunctions } from './computed';
-
-// ENVIRONMENT is replaced with 'dev' / 'prod' on serve / build
-// eslint-disable-next-line no-constant-condition
-const baseUrl = 'ENVIRONMENT' === 'dev'
-  ? 'http://localhost:5000/book-inquiry/us-central1/api/'
-  : 'https://us-central1-book-inquiry.cloudfunctions.net/api/';
 
 class Store extends StoreRoot {
   async newSearch() {
@@ -35,15 +30,6 @@ class Store extends StoreRoot {
       firstLoad: false,
     });
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  async pokeServer() {
-    try {
-      await fetch(`${baseUrl}poke`);
-    } catch (e) {
-      // do nothing if poke call fails
-    }
-  }
 }
 
 const initialState = {
@@ -62,6 +48,7 @@ const store = new Store(initialState);
 // add all store modules
 store.addModule('items', ItemsModule, fetch);
 store.addModule('pagination', PaginationModule);
+store.addModule('poke', PokeModule, fetch);
 
 // perform search after pagination event occurs
 store.addDispatchTrigger('pagination/nextPage', 'performSearch');

@@ -4,7 +4,7 @@
 	import store from "./store/index";
 	export default {
 	  oncreate() {
-	    this.store.pokeServer();
+	    this.store.dispatch("poke/pokeServer");
 	  },
 	  components: {
 	    SearchPage: "./pages/SearchPage.html"

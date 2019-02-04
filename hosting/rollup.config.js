@@ -16,7 +16,7 @@ export default {
   },
   plugins: [
     replace({
-      include: ['./src/store/index.js', './src/store/modules/Items.js'],
+      include: ['./src/store/modules/Poke.js', './src/store/modules/Items.js'],
       values: {
         ENVIRONMENT: production ? 'prod' : 'dev',
       },
