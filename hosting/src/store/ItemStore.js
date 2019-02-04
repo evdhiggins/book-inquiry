@@ -11,7 +11,7 @@ class ItemStore {
     this._fetch = fetchWrapper;
   }
 
-  async getItems({ searchValue, itemIndex }) {
+  async getItems({ searchValue, currentIndex: itemIndex }) {
     // return error when searchValue isn't a valid string
     if (!searchValue || typeof searchValue !== 'string') {
       return { error: true, items: [], totalItems: 0 };

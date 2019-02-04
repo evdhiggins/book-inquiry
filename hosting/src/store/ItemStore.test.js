@@ -14,18 +14,18 @@ const fetchMock = fetchMockFactory();
 const httpErrorFetchMock = fetchMockFactory(true);
 const serverErrorFetchMock = fetchMockFactory(false, true);
 
-const callGetItemsWith = (fetch, searchValue, itemIndex) => () => {
+const callGetItemsWith = (fetch, searchValue, currentIndex) => () => {
   const itemStore = new ItemStore(fetch);
-  return itemStore.getItems({ searchValue, itemIndex });
+  return itemStore.getItems({ searchValue, currentIndex });
 };
 
-const storeStateMock = { searchValue: 'foo', itemIndex: 0 };
+const storeStateMock = { searchValue: 'foo', currentIndex: 0 };
 
 describe('getItems', () => {
   test('Return an object that contains `error`, `items`, and `totalItems`', async () => {
     expect.assertions(4);
     const itemStore = new ItemStore(fetchMock);
-    const response = await itemStore.getItems({ searchValue: 'foo', itemIndex: 0 });
+    const response = await itemStore.getItems({ searchValue: 'foo', currentIndex: 0 });
 
     expect(typeof response).toBe('object');
     expect(response).toHaveProperty('error');
@@ -92,16 +92,16 @@ describe('getItems', () => {
     expect.assertions(1);
     const fetch = fetchMockFactory();
     const itemStore = new ItemStore(fetch);
-    await itemStore.getItems({ searchValue: 'a bit of string', itemIndex: 0 });
+    await itemStore.getItems({ searchValue: 'a bit of string', currentIndex: 0 });
 
     expect(fetch.mock.calls[0][0]).toMatch(/q=a%20bit%20of%20string/);
   });
 
-  test('Call `fetch` with correct `itemIndex` value', async () => {
+  test('Call `fetch` with correct `currentIndex` value', async () => {
     expect.assertions(1);
     const fetch = fetchMockFactory();
     const itemStore = new ItemStore(fetch);
-    await itemStore.getItems({ searchValue: 'foo', itemIndex: 20 });
+    await itemStore.getItems({ searchValue: 'foo', currentIndex: 20 });
 
     expect(fetch.mock.calls[0][0]).toMatch(/startIndex=20/);
   });
