@@ -1,6 +1,6 @@
 import StoreRoot from './StoreRoot';
-import { ItemStore } from './ItemStore';
-import { PaginationStore } from './PaginationStore';
+import { ItemsModule } from './modules/Items';
+import { PaginationModule } from './modules/Pagination';
 import { computedFunctions } from './computed';
 
 // ENVIRONMENT is replaced with 'dev' / 'prod' on serve / build
@@ -60,8 +60,8 @@ const initialState = {
 const store = new Store(initialState);
 
 // add all store modules
-store.addModule('items', ItemStore, fetch);
-store.addModule('pagination', PaginationStore);
+store.addModule('items', ItemsModule, fetch);
+store.addModule('pagination', PaginationModule);
 
 // perform search after pagination event occurs
 store.addDispatchTrigger('pagination/nextPage', 'performSearch');

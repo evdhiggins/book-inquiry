@@ -1,8 +1,8 @@
-const { StoreModule } = require('./StoreModule');
+const { StoreModule } = require('../StoreModule');
 
-class PaginationStore extends StoreModule {
+class PaginationModule extends StoreModule {
   /**
-   * The current state of `PaginationStore`
+   * The current state of `PaginationModule`
    */
   get paginationState() {
     return {
@@ -13,7 +13,7 @@ class PaginationStore extends StoreModule {
   }
 
   /**
-   * `PaginationStore` controls the logic and state of pagination
+   * `PaginationModule` controls the logic and state of pagination
    * in the application
    * @param {any} storeState The state object of the UI store
    */
@@ -26,7 +26,7 @@ class PaginationStore extends StoreModule {
   }
 
   /**
-   * Reset the `PaginationStore` state to values calculated from `storeState`
+   * Reset the `PaginationModule` state to values calculated from `storeState`
    * @param {any} storeState The state object of the UI store
    */
   reset({ itemsPerRequest = 1, totalItems = 0 }) {
@@ -70,11 +70,11 @@ class PaginationStore extends StoreModule {
 
   /**
    * Updates the UI store via the scoped set function received
-   * when PaginationStore was initialized
+   * when PaginationModule was initialized
    */
   _updateState() {
     this.set(this.paginationState);
   }
 }
 
-module.exports = { PaginationStore };
+module.exports = { PaginationModule };
