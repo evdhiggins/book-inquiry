@@ -1,15 +1,5 @@
 const { ItemsModule } = require('./Items');
-const { storeFunctions } = require('../__mocks__/index');
-
-// eslint-disable-next-line no-unused-vars
-const fetchMockFactory = (httpError = false, serverError = false) => jest.fn(async url => ({
-  ok: !httpError,
-  json: async () => ({
-    error: serverError,
-    totalItems: 0,
-    items: [],
-  }),
-}));
+const { storeFunctions, fetchMockFactory } = require('../__mocks__/index');
 
 const fetchMock = fetchMockFactory();
 const httpErrorFetchMock = fetchMockFactory(true);
