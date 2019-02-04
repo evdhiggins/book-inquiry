@@ -1,7 +1,7 @@
 import StoreRoot from './StoreRoot';
 import { ItemsModule } from './modules/Items';
 import { PaginationModule } from './modules/Pagination';
-import { PokeModule } from './modules/Poke';
+import { PingModule } from './modules/Ping';
 import { computedFunctions } from './computed';
 
 class Store extends StoreRoot {
@@ -48,7 +48,7 @@ const store = new Store(initialState);
 // add all store modules
 store.addModule('items', ItemsModule, fetch);
 store.addModule('pagination', PaginationModule);
-store.addModule('poke', PokeModule, fetch);
+store.addModule('ping', PingModule, fetch);
 
 // perform search after pagination event occurs
 store.addDispatchTrigger('pagination/nextPage', 'performSearch');

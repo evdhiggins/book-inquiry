@@ -6,20 +6,20 @@ const baseUrl = 'ENVIRONMENT' === 'dev'
   ? 'http://localhost:5000/book-inquiry/us-central1/api/'
   : 'https://us-central1-book-inquiry.cloudfunctions.net/api/';
 
-class PokeModule extends StoreModule {
+class PingModule extends StoreModule {
   constructor(storeFunctions, fetch) {
     super(storeFunctions);
     // wrap fetch to avoid changing fetch's `this` context
     this._fetch = (...args) => fetch(...args);
   }
 
-  async pokeServer() {
+  async pingServer() {
     try {
-      await this._fetch(`${baseUrl}poke`);
+      await this._fetch(`${baseUrl}ping`);
     } catch (_) {
-      // do nothing if poke call fails
+      // do nothing if ping call fails
     }
   }
 }
 
-module.exports = { PokeModule };
+module.exports = { PingModule };

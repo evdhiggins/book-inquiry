@@ -1,20 +1,20 @@
-const { PokeModule } = require('./Poke');
+const { PingModule } = require('./Ping');
 const { storeFunctions, fetchMockFactory } = require('../__mocks__/index');
 
-describe('pokeServer', () => {
+describe('pingServer', () => {
   test('Call `fetch` once', async () => {
     expect.assertions(1);
     const fetchMock = fetchMockFactory();
-    const pokeModule = new PokeModule(storeFunctions, fetchMock);
-    await pokeModule.pokeServer();
+    const pingModule = new PingModule(storeFunctions, fetchMock);
+    await pingModule.pingServer();
     expect(fetchMock.mock.calls.length).toBe(1);
   });
 
   test('Call `fetch` with a valid url', async () => {
     expect.assertions(1);
     const fetchMock = fetchMockFactory();
-    const pokeModule = new PokeModule(storeFunctions, fetchMock);
-    await pokeModule.pokeServer();
+    const pingModule = new PingModule(storeFunctions, fetchMock);
+    await pingModule.pingServer();
     const url = fetchMock.mock.calls[0][0];
 
     // RegExp taken from https://stackoverflow.com/a/3809435
@@ -22,12 +22,12 @@ describe('pokeServer', () => {
     expect(url).toMatch(urlRegExp);
   });
 
-  test("Call `fetch` for the 'poke' endpoint", async () => {
+  test("Call `fetch` for the 'ping' endpoint", async () => {
     expect.assertions(1);
     const fetchMock = fetchMockFactory();
-    const pokeModule = new PokeModule(storeFunctions, fetchMock);
-    await pokeModule.pokeServer();
+    const pingModule = new PingModule(storeFunctions, fetchMock);
+    await pingModule.pingServer();
     const url = fetchMock.mock.calls[0][0];
-    expect(url).toMatch(/\/poke$/);
+    expect(url).toMatch(/\/ping$/);
   });
 });
