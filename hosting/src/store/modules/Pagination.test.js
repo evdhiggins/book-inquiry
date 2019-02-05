@@ -8,7 +8,9 @@ const { storeFunctions } = require('../__mocks__/index');
 
 const mockInitialState = {
   itemsPerRequest: 20,
-  totalItems: 100,
+  itemsState: {
+    totalItems: 100,
+  },
 };
 
 describe('nextPageExists', () => {
@@ -48,14 +50,14 @@ describe('reset', () => {
 
   test('Set `itemsPerRequest` and `totalItems` to match input state', () => {
     const paginationStore = new PaginationModule(storeFunctions);
-    paginationStore.reset({ itemsPerRequest: 10, totalItems: 50 });
+    paginationStore.reset({ itemsPerRequest: 10, itemsState: { totalItems: 50 } });
     expect(paginationStore.itemsPerRequest).toBe(10);
     expect(paginationStore.totalItems).toBe(50);
   });
 
   test('Set `itemsPerRequest` & `totalItems` to 1 & 0 if input values are not valid numbers', () => {
     const paginationStore = new PaginationModule(storeFunctions);
-    paginationStore.reset({ itemsPerRequest: 0, totalItems: -23 });
+    paginationStore.reset({ itemsPerRequest: 0, itemsState: { totalItems: -23 } });
     expect(paginationStore.itemsPerRequest).toBe(1);
     expect(paginationStore.totalItems).toBe(0);
   });
@@ -64,7 +66,7 @@ describe('reset', () => {
 describe('nextPage', () => {
   test('Increment `currentPage` by one if next page exists', () => {
     const paginationStore = new PaginationModule(storeFunctions);
-    paginationStore.reset({ itemsPerRequest: 5, totalItems: 50 });
+    paginationStore.reset({ itemsPerRequest: 5, itemsState: { totalItems: 50 } });
     const initialPage = paginationStore.currentPage;
     paginationStore.nextPage();
     expect(paginationStore.currentPage).toBe(initialPage + 1);

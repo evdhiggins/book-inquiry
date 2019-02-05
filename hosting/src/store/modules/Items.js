@@ -6,25 +6,55 @@ const baseUrl = 'ENVIRONMENT' === 'dev'
   ? 'http://localhost:5000/book-inquiry/us-central1/api/'
   : 'https://us-central1-book-inquiry.cloudfunctions.net/api/';
 
+/**
+ * Construct request url
+ */
+const requestUrl = ({ encodedSearchString, startIndex }) => `${baseUrl}search?q=${encodedSearchString}&startIndex=${startIndex}`;
+
+/**
+ *  Protect against invalid itemIndex input
+ */
+const startIndex = ({ itemIndex }) => {
+  const indexNumber = Number(itemIndex);
+  if (!Number.isNaN(indexNumber) && indexNumber >= 0) {
+    return indexNumber;
+  }
+  return 0;
+};
+
+/**
+ * Encode the searchValue to be URI safe
+ */
+const encodedSearchString = ({ searchValue }) => encodeURIComponent(searchValue);
+
+const moduleState = {
+  error: false,
+  items: [],
+  totalItems: 0,
+  itemIndex: 0,
+  searchValue: '',
+  encodedSearchString,
+  startIndex,
+  requestUrl,
+};
+
 class ItemsModule extends StoreModule {
   oncreate(fetch) {
     // wrap `fetch` to avoid changing `fetch`'s context of `this`
     this._fetch = (...args) => fetch(...args);
+    return moduleState;
   }
 
   async getItems({ searchValue, currentIndex: itemIndex }) {
     // return error when searchValue isn't a valid string
     if (!searchValue || typeof searchValue !== 'string') {
-      return { error: true, items: [], totalItems: 0 };
+      return this.set({ error: true, items: [], totalItems: 0 });
     }
 
-    try {
-      const encodedSearchString = encodeURI(searchValue);
+    this.set({ itemIndex, searchValue });
 
-      // if itemIndex isn't a valid value, silently default to 0
-      const startIndex = !Number.isNaN(Number(itemIndex)) && Number(itemIndex) > -1 ? itemIndex : 0;
-      const requestUrl = `${baseUrl}search?q=${encodedSearchString}&startIndex=${startIndex}`;
-      const response = await this._fetch(requestUrl);
+    try {
+      const response = await this._fetch(this.requestUrl);
 
       // error making the http request
       if (!response.ok) {
@@ -36,11 +66,17 @@ class ItemsModule extends StoreModule {
       if (error) {
         throw new Error(error);
       }
-      return { error: false, items, totalItems };
+      return this.set({ error: false, items, totalItems });
     } catch (err) {
-      return { error: true, items: [], totalItems: 0 };
+      return this.set({ error: true, items: [], totalItems: 0 });
     }
   }
 }
 
-module.exports = { ItemsModule };
+// export compute functions for tests
+module.exports = {
+  ItemsModule,
+  requestUrl,
+  startIndex,
+  encodedSearchString,
+};

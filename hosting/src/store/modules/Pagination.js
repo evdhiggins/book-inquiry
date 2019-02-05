@@ -29,7 +29,7 @@ class PaginationModule extends StoreModule {
    * Reset the `PaginationModule` state to values calculated from `storeState`
    * @param {any} storeState The state object of the UI store
    */
-  reset({ itemsPerRequest = 1, totalItems = 0 }) {
+  reset({ itemsPerRequest = 1, itemsState: { totalItems } = 0 }) {
     this.currentPage = 1;
     this.itemsPerRequest = Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1;
     this.totalItems = Number(totalItems) > 0 ? Number(totalItems) : 0;

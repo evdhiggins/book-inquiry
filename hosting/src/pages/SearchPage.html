@@ -12,17 +12,17 @@
 	{:elseif $firstLoad === true}
 	<SearchWelcome />
 	<!-- if error -->
-	{:elseif $error === true}
+	{:elseif $itemsState.error === true}
 	<SearchError />
 	<!-- otherwise -->
 	{:else}
 	<div class="results-container">
-		{#each $items as item}
+		{#each $itemsState.items as item}
 		<SearchItem {item} /> {:else}
 		<SearchNoResults /> {/each}
 	</div>
 	<!-- if Items -->
-	{#if $items.length > 0}
+	{#if $itemsState.items.length > 0}
 	<div class="page-controls">
 		<SearchPagination />
 	</div>
