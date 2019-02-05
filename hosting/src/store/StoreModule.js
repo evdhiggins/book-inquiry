@@ -1,10 +1,10 @@
 class StoreModule {
   constructor(storeFunctions, ...args) {
-    // refreshes compute values & sets the module state in the StoreRoot
-    this.set = (newState) => {
-      this.__refreshComputed();
-      storeFunctions.setter(newState);
-    };
+    // update the module's state in StoreRoot
+    this.__set = storeFunctions.setter;
+
+    // provide method for accessing StoreRoot state
+    this.rootGet = storeFunctions.rootGetter;
 
     // provide method for module to call functions in other store modules
     this.dispatch = storeFunctions.dispatch;
@@ -29,6 +29,38 @@ class StoreModule {
   }
 
   /**
+   * Return a copy of StoreModule state
+   */
+  get() {
+    return Object.assign({}, this.__state);
+  }
+
+  /**
+   * Similar usage to Svelte's `set` function. Updates StoreModule state for all values contained
+   * within `newState`, but doesn't change any excluded state values
+   *
+   * Unlike Svelte's `set`, `StoreModule.set` still triggers a refresh of all StoreModule values and
+   * computed functions
+   * @param {{[index: string]: any}} newState
+   */
+  set(newState) {
+    if (Array.isArray(newState) || newState === null || typeof newState !== 'object') {
+      throw new TypeError('`newState` in StoreModule.set must be an object');
+    }
+    Object.entries(newState).forEach(([key, value]) => {
+      if (this.__computed.hasOwnProperty(key)) {
+        throw new Error(`Cannot manualy set computed value "${key}"`);
+      }
+      if (typeof this.__state[key] !== 'undefined') {
+        this.__state[key] = value;
+      } else {
+        this.__addStateProp(key, value, true);
+      }
+    });
+    this.__refreshState();
+  }
+
+  /**
    * Re-evaluates all computed properties, and assigns the values to the module state.
    * __refreshComputed is called each time the state object is modified
    */
@@ -48,6 +80,14 @@ class StoreModule {
   }
 
   /**
+   * Trigger compute functions & update StoreRoot state
+   */
+  __refreshState() {
+    this.__refreshComputed();
+    this.__set(this.__state);
+  }
+
+  /**
    * Create module state from initialState object. Makes all module state accessible at the
    * module root level (this[key]).
    * @param {any} initialState
@@ -60,8 +100,9 @@ class StoreModule {
     }
 
     Object.entries(initialState).forEach(([key, value]) => {
-      this.__addStateProp(key, value);
+      this.__addStateProp(key, value, true);
     });
+    this.__refreshState();
   }
 
   /**
@@ -70,7 +111,10 @@ class StoreModule {
    * @param {string} propName
    * @param {any} propValue
    */
-  __addStateProp(propName, propValue) {
+  __addStateProp(propName, propValue, skipRefresh = false) {
+    if (typeof propName !== 'string') {
+      throw new TypeError(`StoreModule state error: "${propName}" is not a string`);
+    }
     if (typeof propValue === 'function') {
       this.__computed[propName] = propValue;
       // assign compute functions an intial state value of `null`
@@ -91,9 +135,12 @@ class StoreModule {
         },
         set(v) {
           this.__state[propName] = v;
-          this.set(this.__state);
+          this.__refreshState();
         },
       });
+    }
+    if (!skipRefresh) {
+      this.__refreshState();
     }
   }
 }
