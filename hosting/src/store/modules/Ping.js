@@ -7,8 +7,7 @@ const baseUrl = 'ENVIRONMENT' === 'dev'
   : 'https://us-central1-book-inquiry.cloudfunctions.net/api/';
 
 class PingModule extends StoreModule {
-  constructor(storeFunctions, fetch) {
-    super(storeFunctions);
+  oncreate(fetch) {
     // wrap fetch to avoid changing fetch's `this` context
     this._fetch = (...args) => fetch(...args);
   }

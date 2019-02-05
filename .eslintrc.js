@@ -15,5 +15,8 @@ module.exports = {
 
     // underscore dangle is used for private class properties
     'no-underscore-dangle': 0,
+
+    // store modules may not always use `this`
+    'class-methods-use-this': 0,
   },
 };

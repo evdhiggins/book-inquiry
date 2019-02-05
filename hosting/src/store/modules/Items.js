@@ -7,11 +7,9 @@ const baseUrl = 'ENVIRONMENT' === 'dev'
   : 'https://us-central1-book-inquiry.cloudfunctions.net/api/';
 
 class ItemsModule extends StoreModule {
-  constructor(storeFunctions, fetch) {
-    super(storeFunctions);
+  oncreate(fetch) {
     // wrap `fetch` to avoid changing `fetch`'s context of `this`
-    const fetchWrapper = (...args) => fetch(...args);
-    this._fetch = fetchWrapper;
+    this._fetch = (...args) => fetch(...args);
   }
 
   async getItems({ searchValue, currentIndex: itemIndex }) {

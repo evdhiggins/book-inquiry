@@ -1,28 +1,28 @@
+/**
+ * `PaginationModule` controls the logic and state of pagination
+ * in the application
+ */
+
 const { StoreModule } = require('../StoreModule');
 
-class PaginationModule extends StoreModule {
-  /**
-   * The current state of `PaginationModule`
-   */
-  get paginationState() {
-    return {
-      currentPage: this._currentPage,
-      nextPageExists: this._nextPageExists(),
-      previousPageExists: this._previousPageExists(),
-    };
-  }
+const nextPageExists = ({ currentPage, totalPages }) => currentPage < totalPages;
+const previousPageExists = ({ currentPage }) => currentPage > 1;
+const totalPages = ({ totalItems, itemsPerRequest }) => Math.ceil(totalItems / itemsPerRequest);
 
-  /**
-   * `PaginationModule` controls the logic and state of pagination
-   * in the application
-   * @param {any} storeState The state object of the UI store
-   */
-  constructor(storeFunctions) {
-    super(storeFunctions);
-    this._currentPage = 1;
-    this._itemsPerRequest = 1;
-    this._totalItems = 0;
-    this._toatlPages = 0;
+const moduleState = {
+  currentPage: 1,
+  itemsPerRequest: 1,
+  totalItems: 0,
+
+  // computed state
+  totalPages,
+  nextPageExists,
+  previousPageExists,
+};
+
+class PaginationModule extends StoreModule {
+  oncreate() {
+    return moduleState;
   }
 
   /**
@@ -30,11 +30,9 @@ class PaginationModule extends StoreModule {
    * @param {any} storeState The state object of the UI store
    */
   reset({ itemsPerRequest = 1, totalItems = 0 }) {
-    this._currentPage = 1;
-    this._itemsPerRequest = Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1;
-    this._totalItems = Number(totalItems) > 0 ? Number(totalItems) : 0;
-    this._totalPages = Math.ceil(this._totalItems / this._itemsPerRequest);
-    this._updateState();
+    this.currentPage = 1;
+    this.itemsPerRequest = Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1;
+    this.totalItems = Number(totalItems) > 0 ? Number(totalItems) : 0;
     return this;
   }
 
@@ -42,10 +40,9 @@ class PaginationModule extends StoreModule {
    * Increment `currentPage` by one
    */
   nextPage() {
-    if (this._nextPageExists()) {
-      this._currentPage += 1;
+    if (this.nextPageExists) {
+      this.currentPage += 1;
     }
-    this._updateState();
     return this;
   }
 
@@ -53,28 +50,17 @@ class PaginationModule extends StoreModule {
    * Decrement `currentPage` by one
    */
   previousPage() {
-    if (this._previousPageExists()) {
-      this._currentPage -= 1;
+    if (this.previousPageExists) {
+      this.currentPage -= 1;
     }
-    this._updateState();
     return this;
-  }
-
-  _nextPageExists() {
-    return this._currentPage < this._totalPages;
-  }
-
-  _previousPageExists() {
-    return this._currentPage > 1;
-  }
-
-  /**
-   * Updates the UI store via the scoped set function received
-   * when PaginationModule was initialized
-   */
-  _updateState() {
-    this.set(this.paginationState);
   }
 }
 
-module.exports = { PaginationModule };
+// export compute functions for tests
+module.exports = {
+  PaginationModule,
+  nextPageExists,
+  previousPageExists,
+  totalPages,
+};
