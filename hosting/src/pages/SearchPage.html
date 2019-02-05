@@ -6,13 +6,13 @@
 		<SearchBar />
 	</div>
 	<!-- if loading -->
-	{#if $loading === true}
+	{#if $uiState.loading === true}
 	<Spinner />
 	<!-- if firstLoad -->
-	{:elseif $firstLoad === true}
+	{:elseif $uiState.firstLoad === true}
 	<SearchWelcome />
 	<!-- if error -->
-	{:elseif $itemsState.error === true}
+	{:elseif $uiState.error === true}
 	<SearchError />
 	<!-- otherwise -->
 	{:else}

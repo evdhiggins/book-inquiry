@@ -1,12 +1,12 @@
 <BaseButton style="width: 50px;"
             disabled={!$paginationState.previousPageExists}
-            on:click="$dispatch('pagination/previousPage')">&larr;</BaseButton>
+            on:click="$dispatch('previousPage')">&larr;</BaseButton>
 <div class="page-numbers">
 	&nbsp;{$paginationState.currentPage}&nbsp;
 </div>
 <BaseButton style="width: 50px;"
             disabled={!$paginationState.nextPageExists}
-            on:click="$dispatch('pagination/nextPage')">&rarr;</BaseButton>
+            on:click="$dispatch('nextPage')">&rarr;</BaseButton>
 
 <script>
   export default {
