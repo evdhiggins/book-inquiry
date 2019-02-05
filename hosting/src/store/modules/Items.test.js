@@ -1,6 +1,4 @@
-const {
-  ItemsModule, encodedSearchString, requestUrl, startIndex,
-} = require('./Items');
+const { ItemsModule, encodedSearchString, requestUrl } = require('./Items');
 const { storeFunctions, fetchMockFactory } = require('../__mocks__/index');
 
 const fetchMock = fetchMockFactory();
@@ -42,17 +40,22 @@ describe('requestUrl', () => {
   });
 });
 
-describe('startIndex', () => {
+describe('_getStartIndex', () => {
+  const getStartIndex = (currentPage, itemsPerRequest) => {
+    const itemsStore = new ItemsModule(storeFunctions, fetchMock);
+    itemsStore._getStartIndex(currentPage, itemsPerRequest);
+    return itemsStore.startIndex;
+  };
   test('Return the index of the next item', () => {
-    expect(startIndex({ currentPage: 1, itemsPerRequest: 5 })).toBe(0);
-    expect(startIndex({ currentPage: 5, itemsPerRequest: 10 })).toBe(40);
+    expect(getStartIndex(1, 5)).toBe(0);
+    expect(getStartIndex(5, 10)).toBe(40);
   });
 
   test('Return `0` when either input is NaN or negative', () => {
-    expect(startIndex({ currentPage: NaN, itemsPerRequest: 5 })).toBe(0);
-    expect(startIndex({ currentPage: -55, itemsPerRequest: 5 })).toBe(0);
-    expect(startIndex({ currentPage: -23, itemsPerRequest: -23 })).toBe(0);
-    expect(startIndex({ currentPage: 100 })).toBe(0);
+    expect(getStartIndex(NaN, 5)).toBe(0);
+    expect(getStartIndex(-55, 5)).toBe(0);
+    expect(getStartIndex(-23, -23)).toBe(0);
+    expect(getStartIndex(100)).toBe(0);
   });
 });
 

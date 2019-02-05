@@ -12,33 +12,17 @@ const baseUrl = 'ENVIRONMENT' === 'dev'
 const requestUrl = ({ encodedSearchString, startIndex }) => `${baseUrl}search?q=${encodedSearchString}&startIndex=${startIndex}`;
 
 /**
- *  the current starting index for items in api requests
- */
-const startIndex = ({ currentPage, itemsPerRequest }) => {
-  const isValidNumber = numValue => Number(numValue) > 0;
-
-  if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
-    return 0;
-  }
-
-  return (currentPage - 1) * itemsPerRequest;
-};
-
-/**
  * Encode the searchValue to be URI safe
  */
 const encodedSearchString = ({ searchValue }) => encodeURIComponent(searchValue);
 
 const moduleState = {
-  currentPage: 1,
-  itemsPerRequest: 20,
   error: false,
   items: [],
   totalItems: 0,
-  itemIndex: 0,
   searchValue: '',
+  startIndex: 0,
   encodedSearchString,
-  startIndex,
   requestUrl,
 };
 
@@ -55,7 +39,8 @@ class ItemsModule extends StoreModule {
       return this.set({ error: true, items: [], totalItems: 0 });
     }
 
-    this.set({ searchValue, currentPage, itemsPerRequest });
+    this.searchValue = searchValue;
+    this._getStartIndex(currentPage, itemsPerRequest);
 
     try {
       const response = await this._fetch(this.requestUrl);
@@ -75,12 +60,25 @@ class ItemsModule extends StoreModule {
       return this.set({ error: true, items: [], totalItems: 0 });
     }
   }
+
+  /**
+   *  Calculate the current starting index for items in api requests
+   */
+  _getStartIndex(currentPage, itemsPerRequest) {
+    const isValidNumber = numValue => Number(numValue) > 0;
+
+    if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
+      this.startIndex = 0;
+      return;
+    }
+
+    this.startIndex = (currentPage - 1) * itemsPerRequest;
+  }
 }
 
 // export compute functions for tests
 module.exports = {
   ItemsModule,
   requestUrl,
-  startIndex,
   encodedSearchString,
 };
