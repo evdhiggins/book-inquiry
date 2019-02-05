@@ -12,8 +12,7 @@ class Store extends StoreRoot {
 
       // reset pagination state to the first page with the new totalItems #
       const storeState = this.get();
-      const { paginationState } = this.dispatch('pagination/reset', storeState);
-      this.set({ paginationState });
+      this.dispatch('pagination/reset', storeState);
     } else if (searchValue !== '') {
       this.set({ items: [], lastSearch: searchValue, firstLoad: false });
     }
