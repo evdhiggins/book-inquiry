@@ -7,13 +7,21 @@ const fetchMock = fetchMockFactory();
 const httpErrorFetchMock = fetchMockFactory(true);
 const serverErrorFetchMock = fetchMockFactory(false, true);
 
-const callGetItemsWith = (fetch, searchValue, currentIndex) => async () => {
+const callGetItemsWith = (fetch, searchValue) => async () => {
   const itemStore = new ItemsModule(storeFunctions, fetch);
-  await itemStore.getItems({ searchValue, currentIndex });
+  await itemStore.getItems({
+    searchValue,
+    paginationState: { currentPage: 1 },
+    itemsPerRequest: 20,
+  });
   return itemStore;
 };
 
-const storeStateMock = { searchValue: 'foo', currentIndex: 0 };
+const storeStateMock = {
+  searchValue: 'foo',
+  paginationState: { currentPage: 0 },
+  itemsPerRequest: 20,
+};
 
 // RegExp taken from https://stackoverflow.com/a/3809435
 const urlRegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/i;
@@ -35,16 +43,16 @@ describe('requestUrl', () => {
 });
 
 describe('startIndex', () => {
-  test('If input is a number greater than or equal to 0 return the input', () => {
-    expect(startIndex({ itemIndex: 0 })).toBe(0);
-    expect(startIndex({ itemIndex: 100 })).toBe(100);
-    expect(startIndex({ itemIndex: 5234 })).toBe(5234);
+  test('Return the index of the next item', () => {
+    expect(startIndex({ currentPage: 1, itemsPerRequest: 5 })).toBe(0);
+    expect(startIndex({ currentPage: 5, itemsPerRequest: 10 })).toBe(40);
   });
 
-  test('If input not a number greater than or equal to 0 return 0', () => {
-    expect(startIndex({ itemIndex: -10 })).toBe(0);
-    expect(startIndex({ itemIndex: null })).toBe(0);
-    expect(startIndex({ itemIndex: NaN })).toBe(0);
+  test('Return `0` when either input is NaN or negative', () => {
+    expect(startIndex({ currentPage: NaN, itemsPerRequest: 5 })).toBe(0);
+    expect(startIndex({ currentPage: -55, itemsPerRequest: 5 })).toBe(0);
+    expect(startIndex({ currentPage: -23, itemsPerRequest: -23 })).toBe(0);
+    expect(startIndex({ currentPage: 100 })).toBe(0);
   });
 });
 
@@ -60,36 +68,36 @@ describe('encodedSearchString', () => {
 
 describe('getItems', () => {
   test('Never throw an error', () => {
-    expect(callGetItemsWith(fetchMock, 'foo', 0)).not.toThrowError();
-    expect(callGetItemsWith(httpErrorFetchMock, 'foo', 0)).not.toThrowError();
-    expect(callGetItemsWith(serverErrorFetchMock, 'foo', 0)).not.toThrowError();
+    expect(callGetItemsWith(fetchMock, 'foo')).not.toThrowError();
+    expect(callGetItemsWith(httpErrorFetchMock, 'foo')).not.toThrowError();
+    expect(callGetItemsWith(serverErrorFetchMock, 'foo')).not.toThrowError();
     expect(callGetItemsWith(fetchMock)).not.toThrowError();
     expect(callGetItemsWith(fetchMock, null, 'asdf')).not.toThrowError();
   });
 
   test('Set `error` to `false` when no error', async () => {
     expect.assertions(1);
-    const itemStore = await callGetItemsWith(fetchMock, 'foo', 0)();
+    const itemStore = await callGetItemsWith(fetchMock, 'foo')();
     expect(itemStore.error).toBe(false);
   });
 
   test('Set `error` to `true` when a http error occurs', async () => {
     expect.assertions(1);
-    const itemStore = await callGetItemsWith(httpErrorFetchMock, 'foo', 0)();
+    const itemStore = await callGetItemsWith(httpErrorFetchMock, 'foo')();
     expect(itemStore.error).toBe(true);
   });
 
   test('Set `error` to `true` when a server error occurs', async () => {
     expect.assertions(1);
-    const itemStore = await callGetItemsWith(serverErrorFetchMock, 'foo', 0)();
+    const itemStore = await callGetItemsWith(serverErrorFetchMock, 'foo')();
     expect(itemStore.error).toBe(true);
   });
 
   test('Set `error` to `true` when searchValue is not a truthy string', async () => {
     expect.assertions(3);
-    const itemStore1 = await callGetItemsWith(fetchMock, '', 0)();
-    const itemStore2 = await callGetItemsWith(fetchMock, null, 0)();
-    const itemStore3 = await callGetItemsWith(fetchMock, undefined, 0)();
+    const itemStore1 = await callGetItemsWith(fetchMock, '')();
+    const itemStore2 = await callGetItemsWith(fetchMock, null)();
+    const itemStore3 = await callGetItemsWith(fetchMock, undefined)();
     expect(itemStore1.error).toBe(true);
     expect(itemStore2.error).toBe(true);
     expect(itemStore3.error).toBe(true);

@@ -3,7 +3,6 @@ import { ItemsModule } from './modules/Items';
 import { PaginationModule } from './modules/Pagination';
 import { PingModule } from './modules/Ping';
 import { UiStatusModule } from './modules/UiStatus';
-import { computedFunctions } from './computed';
 
 class Store extends StoreRoot {
   async newSearch() {
@@ -46,10 +45,5 @@ store.addModule('items', ItemsModule, fetch);
 store.addModule('pagination', PaginationModule);
 store.addModule('ping', PingModule, fetch);
 store.addModule('ui', UiStatusModule, fetch);
-
-// add all computed values defined in ./computed.js
-computedFunctions.forEach((computeArgs) => {
-  store.compute(...computeArgs);
-});
 
 export default store;

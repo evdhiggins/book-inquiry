@@ -12,14 +12,16 @@ const baseUrl = 'ENVIRONMENT' === 'dev'
 const requestUrl = ({ encodedSearchString, startIndex }) => `${baseUrl}search?q=${encodedSearchString}&startIndex=${startIndex}`;
 
 /**
- *  Protect against invalid itemIndex input
+ *  the current starting index for items in api requests
  */
-const startIndex = ({ itemIndex }) => {
-  const indexNumber = Number(itemIndex);
-  if (!Number.isNaN(indexNumber) && indexNumber >= 0) {
-    return indexNumber;
+const startIndex = ({ currentPage, itemsPerRequest }) => {
+  const isValidNumber = numValue => Number(numValue) > 0;
+
+  if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
+    return 0;
   }
-  return 0;
+
+  return (currentPage - 1) * itemsPerRequest;
 };
 
 /**
@@ -28,6 +30,8 @@ const startIndex = ({ itemIndex }) => {
 const encodedSearchString = ({ searchValue }) => encodeURIComponent(searchValue);
 
 const moduleState = {
+  currentPage: 1,
+  itemsPerRequest: 20,
   error: false,
   items: [],
   totalItems: 0,
@@ -45,13 +49,13 @@ class ItemsModule extends StoreModule {
     return moduleState;
   }
 
-  async getItems({ searchValue, currentIndex: itemIndex }) {
+  async getItems({ searchValue, paginationState: { currentPage }, itemsPerRequest }) {
     // return error when searchValue isn't a valid string
     if (!searchValue || typeof searchValue !== 'string') {
       return this.set({ error: true, items: [], totalItems: 0 });
     }
 
-    this.set({ itemIndex, searchValue });
+    this.set({ searchValue, currentPage, itemsPerRequest });
 
     try {
       const response = await this._fetch(this.requestUrl);
