@@ -1,16 +1,18 @@
-const storeFunctionsFactory = () => ({
-  state: {},
-  rootState: {},
-  getter() {
-    return this.state;
-  },
-  setter(state) {
+const storeFunctionsFactory = () => {
+  const storeFunctions = {
+    state: {},
+    rootState: {},
+  };
+  function setter(state) {
     this.state = state;
-  },
-  rootGetter() {
+  }
+  function rootGetter() {
     return this.rootState;
-  },
-});
+  }
+  storeFunctions.setter = setter.bind(storeFunctions);
+  storeFunctions.rootGetter = rootGetter.bind(storeFunctions);
+  return storeFunctions;
+};
 
 // eslint-disable-next-line no-unused-vars
 const fetchMockFactory = (httpError = false, serverError = false) => jest.fn(async url => ({

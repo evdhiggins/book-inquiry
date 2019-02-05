@@ -24,11 +24,14 @@ export default class StoreRoot extends Store {
     if (!this.get()[stateName]) {
       this.set({ [stateName]: {} });
     }
+    const dispatch = this.dispatch.bind(this);
+    const rootGetter = this.get.bind(this);
+    const setter = state => this.set({ [stateName]: state });
+
     const storeFunctions = {
-      getter: () => this.get()[stateName],
-      setter: state => this.set({ [stateName]: state }),
-      dispatch: this.dispatch,
-      rootGetter: this.get,
+      setter: setter.bind(this),
+      dispatch,
+      rootGetter,
     };
     this[storeName] = new ModuleClass(storeFunctions, ...args);
   }
