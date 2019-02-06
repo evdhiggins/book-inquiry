@@ -5,36 +5,54 @@ import { PingModule } from './modules/Ping';
 import { UiStatusModule } from './modules/UiStatus';
 
 class Store extends StoreRoot {
-  async newSearch() {
+  /**
+   * Triggered by the search button or an "enter" keyup event in the search bar
+   */
+  async search() {
     const { searchValue } = this.get();
     if (searchValue.trim() !== '') {
-      await this.dispatch('performSearch');
+      this.dispatch('ui/startLoading');
+      this.dispatch('setLastSearch');
+      await this.dispatch('items/getItems', this.get());
       this.dispatch('pagination/reset', this.get());
+      this.dispatch('ui/stopLoading', this.get());
     }
   }
 
-  async performSearch() {
+  /**
+   * Triggered by the "next page" pagination button
+   */
+  async nextPage() {
+    this.dispatch('pagination/nextPage');
     this.dispatch('ui/startLoading');
-    const { searchValue } = this.get();
-    this.set({ lastSearch: searchValue });
+    this.dispatch('setLastSearch');
     await this.dispatch('items/getItems', this.get());
     this.dispatch('ui/stopLoading', this.get());
   }
 
-  nextPage() {
-    this.dispatch('pagination/nextPage');
-    this.dispatch('performSearch');
+  /**
+   * Triggered by the "previous page" pagination button
+   */
+  async previousPage() {
+    this.dispatch('pagination/previousPage');
+    this.dispatch('ui/startLoading');
+    this.dispatch('setLastSearch');
+    await this.dispatch('items/getItems', this.get());
+    this.dispatch('ui/stopLoading', this.get());
   }
 
-  previousPage() {
-    this.dispatch('pagination/previousPage');
-    this.dispatch('performSearch');
+  /**
+   * Save the previous search. Displayed in the case where no items are found
+   */
+  setLastSearchValue() {
+    const { searchValue } = this.get();
+    this.set({ lastSearchValue: searchValue });
   }
 }
 
 const initialState = {
   itemsPerRequest: 20,
-  lastSearch: '',
+  lastSearchValue: '',
   searchValue: '',
 };
 
