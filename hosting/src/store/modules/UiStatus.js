@@ -27,6 +27,7 @@ class UiStatusModule extends StoreModule {
    * Toggle loading off; set error if items request failed
    */
   stopLoading({ itemsState: { error } }) {
+    document.documentElement.scrollTop = 0;
     this.set({ loading: false, error });
   }
 }
