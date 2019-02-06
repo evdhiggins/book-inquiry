@@ -4,16 +4,16 @@ describe('createSearchUrl', () => {
   // shorten for horizontal readability
   const csu = createSearchUrl;
   test('Return a string', () => {
-    expect(typeof csu({ q: 'test' }, 'apiKey')).toBe('string');
+    expect(typeof csu({ q: 'test', key: 'k' })).toBe('string');
   });
 
   test('Return the correct base url', () => {
     const baseUrl = /^https:\/\/www\.googleapis\.com\/books\/v1\/volumes\?/;
-    expect(csu({ q: 'test' }, 'apiKey')).toMatch(baseUrl);
+    expect(csu({ q: 'test', key: 'k' })).toMatch(baseUrl);
   });
 
   test('Throw an error when `q` input is invalid', () => {
-    const callWithQAs = q => () => csu({ q }, 'k');
+    const callWithQAs = q => () => csu({ q, key: 'k' });
 
     // invalid input
     expect(callWithQAs(undefined)).toThrow();
@@ -27,37 +27,62 @@ describe('createSearchUrl', () => {
   });
 
   test('Return basic `q` values properly in query string', () => {
-    expect(csu({ q: 'test' }, 'k')).toMatch(/q=test/);
-    expect(csu({ q: 'a test' }, 'k')).toMatch(/q=a%20test/);
+    expect(csu({ q: 'test', key: 'k' })).toMatch(/q=test/);
+    expect(csu({ q: 'a test', key: 'k' })).toMatch(/q=a%20test/);
   });
 
   test('Convert `q` input containing special characters to URI-safe strings', () => {
-    expect(csu({ q: '!@#$%^&*()<>?' }, 'k')).toMatch(/!%40%23%24%25%5E%26\*\(\)%3C%3E%3F/);
-    expect(csu({ q: '一本好书' }, 'k')).toMatch(/q=%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/);
-    expect(csu({ q: '🐶🐱🐭🐹🐰' }, 'k')).toMatch(
+    expect(csu({ q: '!@#$%^&*()<>?', key: 'k' })).toMatch(/!%40%23%24%25%5E%26\*\(\)%3C%3E%3F/);
+    expect(csu({ q: '一本好书', key: 'k' })).toMatch(/q=%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/);
+    expect(csu({ q: '🐶🐱🐭🐹🐰', key: 'k' })).toMatch(
       /q=%F0%9F%90%B6%F0%9F%90%B1%F0%9F%90%AD%F0%9F%90%B9%F0%9F%90%B0/,
     );
   });
 
   test('Correctly parse `startIndex` input', () => {
     const maxNum = Number.MAX_SAFE_INTEGER;
-    expect(csu({ q: 't', startIndex: 5 }, 'k')).toMatch(/startIndex=5/);
-    expect(csu({ q: 't', startIndex: maxNum - 1 }, 'k')).toMatch(
+    expect(csu({ q: 't', startIndex: 5, key: 'k' })).toMatch(/startIndex=5/);
+    expect(csu({ q: 't', startIndex: maxNum - 1, key: 'k' })).toMatch(
       new RegExp(`startIndex=${maxNum - 1}`),
     );
-    expect(csu({ q: 't', startIndex: maxNum }, 'k')).toMatch(/startIndex=0/);
-    expect(csu({ q: 't', startIndex: -1 }, 'k')).toMatch(/startIndex=0/);
-    expect(csu({ q: 't', startIndex: 'ten' }, 'k')).toMatch(/startIndex=0/);
-    expect(csu({ q: 't', startIndex: '10' }, 'k')).toMatch(/startIndex=10/);
-    expect(csu({ q: 't' }, 'k')).toMatch(/startIndex=0/);
+    expect(csu({ q: 't', startIndex: maxNum, key: 'k' })).toMatch(/startIndex=0/);
+    expect(csu({ q: 't', startIndex: -1, key: 'k' })).toMatch(/startIndex=0/);
+    expect(csu({ q: 't', startIndex: 'ten', key: 'k' })).toMatch(/startIndex=0/);
+    expect(csu({ q: 't', startIndex: '10', key: 'k' })).toMatch(/startIndex=10/);
+    expect(csu({ q: 't', key: 'k' })).toMatch(/startIndex=0/);
   });
 
   test('Return a URL containing `field` query value', () => {
-    expect(csu({ q: 't' }, 'k')).toMatch(/fields=[^&]+/);
+    expect(csu({ q: 't', key: 'k' })).toMatch(/fields=[^&]+/);
+  });
+
+  test('Include valid country codes in returned url', () => {
+    expect(csu({ q: 't', country: 'AZ', key: 'k' })).toMatch(/country=AZ/);
+    expect(csu({ q: 't', country: 'KI', key: 'k' })).toMatch(/country=KI/);
+  });
+
+  test("Set country code to 'US' if no valid country code is received", () => {
+    expect(csu({ q: 't', country: 'ABC', key: 'k' })).toMatch(/country=US/);
+    expect(csu({ q: 't', country: null, key: 'k' })).toMatch(/country=US/);
+  });
+
+  test('Include input resultsPerPage value as maxResults if between 1 and 40 (inclusive)', () => {
+    expect(csu({ q: 't', resultsPerPage: 15, key: 'k' })).toMatch(/maxResults=15/);
+    expect(csu({ q: 't', resultsPerPage: 40, key: 'k' })).toMatch(/maxResults=40/);
+  });
+
+  test('Set maxResults to closest valid number if resultsPerPage is an invalid number', () => {
+    expect(csu({ q: 't', resultsPerPage: -1, key: 'k' })).toMatch(/maxResults=1/);
+    expect(csu({ q: 't', resultsPerPage: 200, key: 'k' })).toMatch(/maxResults=40/);
+  });
+
+  test("Set maxResults to 20 if resultsPerPage isn't a number", () => {
+    expect(csu({ q: 't', resultsPerPage: null, key: 'k' })).toMatch(/maxResults=20/);
+    expect(csu({ q: 't', key: 'k' })).toMatch(/maxResults=20/);
   });
 
   test('Throw an error when api key is not a string or is empty', () => {
-    const callWithKeyAs = key => () => csu({ q: 't' }, key);
+    const callWithKeyAs = key => () => csu({ q: 't', key });
     expect(callWithKeyAs(undefined)).toThrow();
     expect(callWithKeyAs('')).toThrow();
     expect(callWithKeyAs({})).toThrow();
@@ -65,8 +90,8 @@ describe('createSearchUrl', () => {
   });
 
   test('Correctly include `key` input', () => {
-    expect(csu({ q: 't' }, 'apiKey')).toMatch(/key=apiKey/);
-    expect(csu({ q: 't' }, 'a-different-api-key')).toMatch(/key=a-different-api-key/);
+    expect(csu({ q: 't', key: 'apiKey' })).toMatch(/key=apiKey/);
+    expect(csu({ q: 't', key: 'a-different-api-key' })).toMatch(/key=a-different-api-key/);
   });
 });
 

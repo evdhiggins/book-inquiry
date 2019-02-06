@@ -1,9 +1,12 @@
 const https = require('https');
 const assert = require('assert');
+const { countryCodes } = require('./countryCodes');
 
 // Generate a valid url from apiKey and user-defined q / startIndex
 // An error is thowing if `q` or `apiKey` are invalid
-exports.createSearchUrl = ({ q, startIndex }, key) => {
+exports.createSearchUrl = ({
+  q, startIndex, country, resultsPerPage, key,
+}) => {
   const qIsValid = typeof q === 'string' && q !== '';
   const keyIsValid = typeof key === 'string' && key !== '';
 
@@ -13,6 +16,27 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   // only suppport non-negative startIndex less than Number.MAX_SAFE_INTEGER
   const indexNumber = Number(startIndex);
   const index = indexNumber > 0 && indexNumber < Number.MAX_SAFE_INTEGER ? indexNumber : 0;
+
+  // ensure that maxResults is between 1 and 40 (inclusive)
+  const maxResultsNumber = Number(resultsPerPage);
+  let maxResults;
+  switch (true) {
+    case Number.isNaN(maxResultsNumber):
+    case maxResultsNumber === 0 && resultsPerPage !== 0: // Number(null) === Number('') === 0
+      maxResults = 20;
+      break;
+    case maxResultsNumber < 1:
+      maxResults = 1;
+      break;
+    case maxResultsNumber > 40:
+      maxResults = 40;
+      break;
+    default:
+      maxResults = maxResultsNumber;
+  }
+
+  // only allow official 2-character country codes
+  const countryCode = countryCodes.includes(country) ? country : 'US';
 
   // fields to be requested from Google Books API
   const fields = [
@@ -32,8 +56,8 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   let url = 'https://www.googleapis.com/books/v1/volumes?';
   url += `q=${encodeURIComponent(q)}`;
   url += `&startIndex=${index}`;
-  url += '&country=US';
-  url += '&maxResults=20';
+  url += `&country=${countryCode}`;
+  url += `&maxResults=${maxResults}`;
   url += `&fields=${fields.join(',')}`;
   url += `&key=${key}`;
 

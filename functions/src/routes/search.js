@@ -3,9 +3,22 @@ const { createSearchUrl, fetch, prepareItem } = require('../utilities');
 
 exports.search = async (req, res) => {
   try {
-    const url = createSearchUrl(req.query, functions.config().search.key);
+    const urlParams = {
+      // default values
+      startIndex: 0,
+      country: 'US',
+      resultsPerPage: 20,
+
+      // override defaults with values in request
+      ...req.query,
+
+      // don't allow key override
+      key: functions.config().search.key,
+    };
+    const url = createSearchUrl(urlParams);
     const results = await fetch(url);
     if (results.error) {
+      // log the full http error to StackDriver
       console.error(results.error);
       throw new Error('API request error');
     }
