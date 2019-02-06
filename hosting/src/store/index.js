@@ -15,6 +15,7 @@ class Store extends StoreRoot {
       this.dispatch('ui/startLoading');
       this.dispatch('setLastSearchValue');
       this.dispatch('pagination/reset', this.get());
+      this.dispatch('items/clearCache');
       await this.dispatch('items/getItems', this.get());
       this.dispatch('pagination/updateItemCounts', this.get());
       this.dispatch('history/pushState', this.get());

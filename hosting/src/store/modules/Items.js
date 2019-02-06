@@ -16,14 +16,28 @@ const requestUrl = ({ encodedSearchString, startIndex }) => `${baseUrl}search?q=
  */
 const encodedSearchString = ({ searchValue }) => encodeURIComponent(searchValue);
 
+/**
+ * The current searched value has not changed
+ */
+const isNewSearch = ({ searchValue, cachedSearch }) => searchValue === cachedSearch;
+
+/**
+ * The requested start index for the current search value exists in memory
+ */
+const itemsAreInCache = ({ startIndex, cachedItems }) => Array.isArray(cachedItems[startIndex]);
+
 const moduleState = {
   error: false,
+  cachedSearch: '',
+  cachedItems: {},
   items: [],
   totalItems: 0,
   searchValue: '',
   startIndex: 0,
   encodedSearchString,
   requestUrl,
+  isNewSearch,
+  itemsAreInCache,
 };
 
 class ItemsModule extends StoreModule {
@@ -33,6 +47,11 @@ class ItemsModule extends StoreModule {
     return moduleState;
   }
 
+  clearCache() {
+    this.set({ cachedSearch: '', cachedItems: {} });
+  }
+
+  // eslint-disable-next-line consistent-return
   async getItems({ searchValue, paginationState: { currentPage }, itemsPerRequest }) {
     // return error when searchValue isn't a valid string
     if (!searchValue || typeof searchValue !== 'string') {
@@ -40,8 +59,47 @@ class ItemsModule extends StoreModule {
     }
 
     this.searchValue = searchValue;
-    this._getStartIndex(currentPage, itemsPerRequest);
+    if (!this.isNewSearch) {
+      this.clearCache();
+    }
 
+    this.cachedSearch = searchValue;
+    this._setStartIndex(currentPage, itemsPerRequest);
+
+    if (this.itemsAreInCache) {
+      this._fetchItemsFromCache();
+    } else {
+      await this._fetchItemsFromApi();
+    }
+  }
+
+  /**
+   * Store results from API in memory
+   */
+  _addItemsToCache() {
+    const { cachedItems } = this.get();
+    cachedItems[this.startIndex] = this.items;
+    this.set({ cachedItems });
+  }
+
+  /**
+   *  Calculate the current starting index for items in api requests
+   */
+  _setStartIndex(currentPage, itemsPerRequest) {
+    const isValidNumber = numValue => Number(numValue) > 0;
+
+    if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
+      this.startIndex = 0;
+      return;
+    }
+
+    this.startIndex = (currentPage - 1) * itemsPerRequest;
+  }
+
+  /**
+   * Fetch items from Google Books API (via server functions)
+   */
+  async _fetchItemsFromApi() {
     try {
       const response = await this._fetch(this.requestUrl);
 
@@ -55,24 +113,19 @@ class ItemsModule extends StoreModule {
       if (error) {
         throw new Error(error);
       }
-      return this.set({ error: false, items, totalItems });
+      this.set({ error: false, items, totalItems });
+      this._addItemsToCache();
     } catch (err) {
-      return this.set({ error: true, items: [], totalItems: 0 });
+      this.set({ error: true, items: [], totalItems: 0 });
     }
   }
 
   /**
-   *  Calculate the current starting index for items in api requests
+   * Return previously-fetched items from in-memory cache
    */
-  _getStartIndex(currentPage, itemsPerRequest) {
-    const isValidNumber = numValue => Number(numValue) > 0;
-
-    if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
-      this.startIndex = 0;
-      return;
-    }
-
-    this.startIndex = (currentPage - 1) * itemsPerRequest;
+  _fetchItemsFromCache() {
+    const items = this.cachedItems[this.startIndex];
+    this.set({ items });
   }
 }
 

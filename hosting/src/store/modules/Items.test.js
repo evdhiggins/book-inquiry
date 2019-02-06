@@ -40,22 +40,22 @@ describe('requestUrl', () => {
   });
 });
 
-describe('_getStartIndex', () => {
-  const getStartIndex = (currentPage, itemsPerRequest) => {
+describe('_setStartIndex', () => {
+  const setStartIndex = (currentPage, itemsPerRequest) => {
     const itemsStore = new ItemsModule(storeFunctions, fetchMock);
-    itemsStore._getStartIndex(currentPage, itemsPerRequest);
+    itemsStore._setStartIndex(currentPage, itemsPerRequest);
     return itemsStore.startIndex;
   };
   test('Return the index of the next item', () => {
-    expect(getStartIndex(1, 5)).toBe(0);
-    expect(getStartIndex(5, 10)).toBe(40);
+    expect(setStartIndex(1, 5)).toBe(0);
+    expect(setStartIndex(5, 10)).toBe(40);
   });
 
   test('Return `0` when either input is NaN or negative', () => {
-    expect(getStartIndex(NaN, 5)).toBe(0);
-    expect(getStartIndex(-55, 5)).toBe(0);
-    expect(getStartIndex(-23, -23)).toBe(0);
-    expect(getStartIndex(100)).toBe(0);
+    expect(setStartIndex(NaN, 5)).toBe(0);
+    expect(setStartIndex(-55, 5)).toBe(0);
+    expect(setStartIndex(-23, -23)).toBe(0);
+    expect(setStartIndex(100)).toBe(0);
   });
 });
 
@@ -106,10 +106,20 @@ describe('getItems', () => {
     expect(itemStore3.error).toBe(true);
   });
 
-  test('Call `fetch` once', async () => {
+  test('Call `fetch` once for a new search', async () => {
     expect.assertions(1);
     const fetch = fetchMockFactory();
     const itemStore = new ItemsModule(storeFunctions, fetch);
+    await itemStore.getItems(storeStateMock);
+    expect(fetch.mock.calls.length).toBe(1);
+  });
+
+  test("Don't call `fetch` if results are cached", async () => {
+    expect.assertions(2);
+    const fetch = fetchMockFactory();
+    const itemStore = new ItemsModule(storeFunctions, fetch);
+    await itemStore.getItems(storeStateMock);
+    expect(fetch.mock.calls.length).toBe(1);
     await itemStore.getItems(storeStateMock);
     expect(fetch.mock.calls.length).toBe(1);
   });
