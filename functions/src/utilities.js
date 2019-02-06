@@ -30,14 +30,14 @@ exports.createSearchUrl = ({ q, startIndex }, key) => {
   ];
 
   let url = 'https://www.googleapis.com/books/v1/volumes?';
-  url += `q=${q}`;
+  url += `q=${encodeURIComponent(q)}`;
   url += `&startIndex=${index}`;
   url += '&country=US';
   url += '&maxResults=20';
   url += `&fields=${fields.join(',')}`;
   url += `&key=${key}`;
 
-  return encodeURI(url);
+  return url;
 };
 
 // fetch and parse data from a json endpoint

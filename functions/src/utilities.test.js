@@ -32,7 +32,7 @@ describe('createSearchUrl', () => {
   });
 
   test('Convert `q` input containing special characters to URI-safe strings', () => {
-    expect(csu({ q: '!@#$%^&*()<>?' }, 'k')).toMatch(/!@#\$%25%5E&\*\(\)%3C%3E\?/);
+    expect(csu({ q: '!@#$%^&*()<>?' }, 'k')).toMatch(/!%40%23%24%25%5E%26\*\(\)%3C%3E%3F/);
     expect(csu({ q: '一本好书' }, 'k')).toMatch(/q=%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/);
     expect(csu({ q: '🐶🐱🐭🐹🐰' }, 'k')).toMatch(
       /q=%F0%9F%90%B6%F0%9F%90%B1%F0%9F%90%AD%F0%9F%90%B9%F0%9F%90%B0/,
