@@ -94,6 +94,6 @@ store.addModule('items', ItemsModule, fetch);
 store.addModule('history', HistoryModule, { window, history: window.history });
 store.addModule('pagination', PaginationModule);
 store.addModule('ping', PingModule, fetch);
-store.addModule('ui', UiStatusModule, fetch);
+store.addModule('ui', UiStatusModule, document);
 
 export default store;

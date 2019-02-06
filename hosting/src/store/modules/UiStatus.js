@@ -8,7 +8,8 @@ const moduleState = {
 };
 
 class UiStatusModule extends StoreModule {
-  oncreate() {
+  oncreate(document) {
+    this._document = document;
     return moduleState;
   }
 
@@ -27,7 +28,7 @@ class UiStatusModule extends StoreModule {
    * Toggle loading off; set error if items request failed
    */
   stopLoading({ itemsState: { error } }) {
-    document.documentElement.scrollTop = 0;
+    this._document.documentElement.scrollTop = 0;
     this.set({ loading: false, error });
   }
 }
