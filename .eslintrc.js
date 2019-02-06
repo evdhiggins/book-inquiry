@@ -18,5 +18,8 @@ module.exports = {
 
     // store modules may not always use `this`
     'class-methods-use-this': 0,
+
+    // no objects are created that do not inherit from the object prototype
+    'no-prototype-builtins': 0,
   },
 };

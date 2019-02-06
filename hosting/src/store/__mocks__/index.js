@@ -2,6 +2,7 @@ const storeFunctionsFactory = () => {
   const storeFunctions = {
     state: {},
     rootState: {},
+    dispatch: jest.fn(),
   };
   function setter(state) {
     this.state = state;
@@ -24,6 +25,31 @@ const fetchMockFactory = (httpError = false, serverError = false) => jest.fn(asy
   }),
 }));
 
-const storeFunctions = storeFunctionsFactory();
+const windowMockFactory = (queryString = '') => ({
+  location: {
+    search: queryString,
+  },
+});
 
-module.exports = { storeFunctions, fetchMockFactory, storeFunctionsFactory };
+const historyMockFactory = () => {
+  const history = {
+    state: [],
+  };
+  function pushState(state, title, url) {
+    this.state.push({ state, title, url });
+  }
+  history.pushState = jest.fn(pushState.bind(history));
+  return history;
+};
+
+const storeFunctions = storeFunctionsFactory();
+const windowMock = windowMockFactory();
+
+module.exports = {
+  storeFunctions,
+  fetchMockFactory,
+  storeFunctionsFactory,
+  historyMockFactory,
+  windowMock,
+  windowMockFactory,
+};

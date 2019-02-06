@@ -29,10 +29,9 @@ class PaginationModule extends StoreModule {
    * Reset the `PaginationModule` state to values calculated from `storeState`
    * @param {any} storeState The state object of the UI store
    */
-  reset({ itemsPerRequest = 1, itemsState: { totalItems } = 0 }) {
+  reset(rootState) {
     this.currentPage = 1;
-    this.itemsPerRequest = Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1;
-    this.totalItems = Number(totalItems) > 0 ? Number(totalItems) : 0;
+    this.updateItemCounts(rootState);
     return this;
   }
 
@@ -54,6 +53,18 @@ class PaginationModule extends StoreModule {
       this.currentPage -= 1;
     }
     return this;
+  }
+
+  /**
+   * Manually set currentPage. If the value is out of page bounds, the closest value is chosen
+   */
+  setPage(newPage) {
+    this.currentPage = newPage;
+  }
+
+  updateItemCounts({ itemsPerRequest = 1, itemsState: { totalItems = 0 } }) {
+    this.itemsPerRequest = Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1;
+    this.totalItems = Number(totalItems) > 0 ? Number(totalItems) : 0;
   }
 }
 

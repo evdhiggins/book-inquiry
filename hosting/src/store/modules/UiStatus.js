@@ -12,6 +12,10 @@ class UiStatusModule extends StoreModule {
     return moduleState;
   }
 
+  reset() {
+    this.set({ loading: false, error: false, firstLoad: true });
+  }
+
   /**
    * Toggle loading on; turn off other UI States
    */
