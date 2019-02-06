@@ -26,6 +26,14 @@ const isNewSearch = ({ searchValue, cachedSearch }) => searchValue === cachedSea
  */
 const itemsAreInCache = ({ startIndex, cachedItems }) => Array.isArray(cachedItems[startIndex]);
 
+/**
+ * Used by prefetch. Check to see if next page of items already exist in cache
+ */
+const nextPageIsCached = ({ cachedItems, startIndex, itemsPerRequest }) => {
+  const key = startIndex + itemsPerRequest;
+  return Array.isArray(cachedItems[key]);
+};
+
 const moduleState = {
   error: false,
   cachedSearch: '',
@@ -34,10 +42,17 @@ const moduleState = {
   totalItems: 0,
   searchValue: '',
   startIndex: 0,
+
+  // saved for pre-fetch use
+  currentPage: 1,
+  itemsPerRequest: 20,
+
+  // computed state
   encodedSearchString,
   requestUrl,
   isNewSearch,
   itemsAreInCache,
+  nextPageIsCached,
 };
 
 class ItemsModule extends StoreModule {
@@ -58,7 +73,7 @@ class ItemsModule extends StoreModule {
       return this.set({ error: true, items: [], totalItems: 0 });
     }
 
-    this.searchValue = searchValue;
+    this.set({ currentPage, searchValue, itemsPerRequest });
     if (!this.isNewSearch) {
       this.clearCache();
     }
@@ -66,19 +81,25 @@ class ItemsModule extends StoreModule {
     this.cachedSearch = searchValue;
     this._setStartIndex(currentPage, itemsPerRequest);
 
-    if (this.itemsAreInCache) {
-      this._fetchItemsFromCache();
-    } else {
+    if (!this.itemsAreInCache) {
+      // fetch items from api and save in cache, but do not set as active
       await this._fetchItemsFromApi();
     }
+    // set cache items as active
+    this._fetchItemsFromCache();
+
+    // trigger prefetch after ui loading animation finishes
+    setTimeout(() => {
+      this._prefetchNextPage();
+    }, 0);
   }
 
   /**
    * Store results from API in memory
    */
-  _addItemsToCache() {
+  _addItemsToCache(items) {
     const { cachedItems } = this.get();
-    cachedItems[this.startIndex] = this.items;
+    cachedItems[this.startIndex] = items;
     this.set({ cachedItems });
   }
 
@@ -99,7 +120,7 @@ class ItemsModule extends StoreModule {
   /**
    * Fetch items from Google Books API (via server functions)
    */
-  async _fetchItemsFromApi() {
+  async _fetchItemsFromApi(prefetch = false) {
     try {
       const response = await this._fetch(this.requestUrl);
 
@@ -113,10 +134,13 @@ class ItemsModule extends StoreModule {
       if (error) {
         throw new Error(error);
       }
-      this.set({ error: false, items, totalItems });
-      this._addItemsToCache();
+      this.set({ error: false, totalItems });
+      this._addItemsToCache(items);
     } catch (err) {
-      this.set({ error: true, items: [], totalItems: 0 });
+      if (!prefetch) {
+        // only display error if search is performed as a user request
+        this.set({ error: true, items: [], totalItems: 0 });
+      }
     }
   }
 
@@ -126,6 +150,16 @@ class ItemsModule extends StoreModule {
   _fetchItemsFromCache() {
     const items = this.cachedItems[this.startIndex];
     this.set({ items });
+  }
+
+  /**
+   * Load the next page of results into search cache
+   */
+  async _prefetchNextPage() {
+    if (!this.nextPageIsCached) {
+      this._setStartIndex(this.currentPage + 1, this.itemsPerRequest);
+      await this._fetchItemsFromApi(true);
+    }
   }
 }
 
