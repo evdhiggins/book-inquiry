@@ -34,6 +34,14 @@ const nextPageIsCached = ({ cachedItems, startIndex, itemsPerRequest }) => {
   return Array.isArray(cachedItems[key]);
 };
 
+/**
+ * Used by prefetch. Check to see if previous page of items already exist in cache
+ */
+const previousPageIsCached = ({ cachedItems, startIndex, itemsPerRequest }) => {
+  const key = startIndex - itemsPerRequest;
+  return Array.isArray(cachedItems[key]);
+};
+
 const moduleState = {
   error: false,
   cachedSearch: '',
@@ -53,6 +61,7 @@ const moduleState = {
   isNewSearch,
   itemsAreInCache,
   nextPageIsCached,
+  previousPageIsCached,
 };
 
 class ItemsModule extends StoreModule {
@@ -90,7 +99,7 @@ class ItemsModule extends StoreModule {
 
     // trigger prefetch after ui loading animation finishes
     setTimeout(() => {
-      this._prefetchNextPage();
+      this._prefetchItems();
     }, 0);
   }
 
@@ -153,20 +162,26 @@ class ItemsModule extends StoreModule {
   }
 
   /**
-   * Load the next page of results into search cache
+   * Load the next/previous page of results into search cache. If the next page
+   * is not in cache, it is fetched. If the next page is in cache, the previous page
+   * is checked and fetched if not in cache
    */
-  async _prefetchNextPage() {
+  async _prefetchItems() {
     if (!this.nextPageIsCached) {
-      const { currentPage, itemsPerRequest } = this.get();
-      this._setStartIndex(currentPage + 1, itemsPerRequest);
-      const { startIndex } = this.get();
+      // if the next page of items are not cached, set the start index for next page
+      this._setStartIndex(this.currentPage + 1, this.itemsPerRequest);
       await this._fetchItemsFromApi(true);
-      const { cachedItems } = this.get();
 
       // if no items are returned, set the currentValue's last page as the current page
+      const { cachedItems, startIndex } = this.get();
       if (Array.isArray(cachedItems[startIndex]) && cachedItems[startIndex].length === 0) {
-        this.dispatch('lastPageEncountered', currentPage);
+        this.dispatch('lastPageEncountered', this.currentPage);
       }
+    } else if (!this.previousPageIsCached && this.currentPage > 1) {
+      // the previous page of items would not be cached if the user navigated directly into
+      // a paginated search (e.g. direct link or page)
+      this._setStartIndex(this.currentPage - 1, this.itemsPerRequest);
+      await this._fetchItemsFromApi(true);
     }
   }
 }
