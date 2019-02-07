@@ -42,14 +42,25 @@ The actual `https` error was due to the Google API not being able to attribute a
 
 The default rollup.js configuration with Svelte outputs the development files and the production files into the same directory. Running the build & deploy scripts while the dev server was running caused the development version to be deployed into production. It took me more time than I'm proud of to figure out the root of the issue.
 
+##### `totalItems` and calculating pagination
+
+Every request to the Google Books API returns the `totalItems` for the request. My first implementation of pagination received this value after the first search request and calculated the maximum number of pages available. Simple, right? Unfortunately, no. There were two issues with this that arose when I attempted to more accurately communicate information regarding the total number of pages.
+
+1. The `totalItems` value is an _estimate_ of the number of items remaining from the current search index, not the total number of items. Theoretically, if the API returned 1000 `totalItems` for the first set of items, it would return 800 for the 200-220 set of items. I thought that this would be a simple adjustment to take into consideration, as the number of the last page could be recalculated after each request. In practice, however, this meant that the total number of pages was changing after each request. If an observant user was noting the total number of pages after each press of the "next page" button, they might notice erratic behavior (`1/87`, `2/86`, `3/88`, `4/55`, etc).
+2. The `totalItems` value seems to be very inaccurate at best. Once requests are made above the 200-item mark, it is very common for an API response to return a `totalItems` count without any items ([example](https://www.googleapis.com/books/v1/volumes?q=a+good+book&startIndex=700&maxResults=20), [example](https://www.googleapis.com/books/v1/volumes?q=advanced+algebra&startIndex=400), [example](https://www.googleapis.com/books/v1/volumes?q=john+odonohue&startIndex=300).
+
+As a way to slightly mitigate this, I added a check on each prefetch request (loading the next page ahead of time) to see if no items were returned. If no items were returned, I set the `lastPage` value as the current page, overriding any calculations based off of `totalItems`. This ended up making the pagination experience a bit more erratic, as the total pages count would often drop from ~85 to 15.
+
+In the end I opted to hide the total page count, as it seemed to only offer a more confusing experience than not knowing the number of pages outright. Next steps to improve this experience might be to set a (false) hard limit of pages ~10 (making any erratic behavior more minor), or to change from pagination to an infinite scroll-based loading.
+
 ### Looking forward
 
 While _Book Inquiry_ can perform basic searches and properly handle many edge cases, it has plenty of opportunities for improvement. Some of these opportunities include:
 
 - Javascript
   - Improve search string processing to better support search modifiers
-  - Properly handle cases where `nextPage` doesn't actually return items (even though `totalItems` suggests that it should)
-  - Cache search results when navigating through results pages to increase the speed that previous pages can be rendered
+  - [x] Properly handle cases where `nextPage` doesn't actually return items (even though `totalItems` suggests that it should)
+  - [x] Cache search results when navigating through results pages to increase the speed that previous pages can be rendered
   - Add E2E & integration tests
 - CSS
   - Use a CSS preprocessor to reduce CSS duplication between components
