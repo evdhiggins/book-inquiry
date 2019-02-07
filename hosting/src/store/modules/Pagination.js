@@ -7,12 +7,28 @@ const { StoreModule } = require('../StoreModule');
 
 const nextPageExists = ({ currentPage, totalPages }) => currentPage < totalPages;
 const previousPageExists = ({ currentPage }) => currentPage > 1;
-const totalPages = ({ totalItems, itemsPerRequest }) => Math.ceil(totalItems / itemsPerRequest);
+
+/**
+ * Calculate the total number of pages available
+ */
+const totalPages = ({
+  currentPage, totalItems, itemsPerRequest, lastPage = 0,
+}) => {
+  // default to lastPage if set
+  if (lastPage !== 0) {
+    return lastPage;
+  }
+  // after each api request totalItems is updated with the API's estimation of the remaining
+  // number of items from the current start index (not the total items overall)
+  const remainingPages = Math.ceil(totalItems / itemsPerRequest) - 1;
+  return currentPage + remainingPages;
+};
 
 const moduleState = {
   currentPage: 1,
   itemsPerRequest: 1,
   totalItems: 0,
+  lastPage: 0,
 
   // computed state
   totalPages,
@@ -30,9 +46,18 @@ class PaginationModule extends StoreModule {
    * @param {any} storeState The state object of the UI store
    */
   reset(rootState) {
-    this.currentPage = 1;
+    this.set({ currentPage: 1, lastPage: 0 });
     this.updateItemCounts(rootState);
     return this;
+  }
+
+  /**
+   * Triggered by items/prefetch when a request returns no items. Sets a hard limit
+   * on the current number of pages, instead of relying on an estimate calculated from
+   * the returned `totalItems` value
+   */
+  setLastPage(lastPage) {
+    this.lastPage = lastPage;
   }
 
   /**

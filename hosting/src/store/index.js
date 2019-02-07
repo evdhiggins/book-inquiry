@@ -47,6 +47,14 @@ class Store extends StoreRoot {
   }
 
   /**
+   * Triggered when a prefetch request in ItemsModule returns no items. Sets a hard
+   * page limit on the current searchValue
+   */
+  lastPageEncountered(lastPage) {
+    this.dispatch('pagination/setLastPage', lastPage);
+  }
+
+  /**
    * Triggered by the "next page" pagination button
    */
   async nextPage() {

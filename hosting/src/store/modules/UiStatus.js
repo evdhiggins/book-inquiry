@@ -5,6 +5,9 @@ const moduleState = {
   firstLoad: true,
   loading: false,
   error: false,
+
+  // controls display of total page count at bottom of ui
+  displayTotalPages: false,
 };
 
 class UiStatusModule extends StoreModule {
@@ -30,6 +33,13 @@ class UiStatusModule extends StoreModule {
   stopLoading({ itemsState: { error } }) {
     this._document.documentElement.scrollTop = 0;
     this.set({ loading: false, error });
+  }
+
+  /**
+   * Toggle visibility of total page count in pagination interface
+   */
+  toggleTotalPagesDisplay() {
+    this.displayTotalPages = !this.displayTotalPages;
   }
 }
 

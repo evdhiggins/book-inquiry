@@ -35,8 +35,32 @@ describe('_previousPageExists', () => {
 
 describe('totalPages', () => {
   test('Return the total number of pages based on `itemsPerRequest` and `totalItems`', () => {
-    expect(totalPages({ itemsPerRequest: 10, totalItems: 100 })).toBe(10);
-    expect(totalPages({ itemsPerRequest: 10, totalItems: 15 })).toBe(2);
+    expect(totalPages({ itemsPerRequest: 10, totalItems: 100, currentPage: 1 })).toBe(10);
+    expect(totalPages({ itemsPerRequest: 10, totalItems: 15, currentPage: 1 })).toBe(2);
+  });
+
+  test('Add currentPage - 1 to the returned value', () => {
+    expect(totalPages({ itemsPerRequest: 10, totalItems: 100, currentPage: 5 })).toBe(14);
+    expect(totalPages({ itemsPerRequest: 10, totalItems: 15, currentPage: 3 })).toBe(4);
+  });
+
+  test('Always return `lastPage` value if it is nonzero', () => {
+    expect(
+      totalPages({
+        itemsPerRequest: 10,
+        totalItems: 100,
+        currentPage: 6,
+        lastPage: 8,
+      }),
+    ).toBe(8);
+    expect(
+      totalPages({
+        itemsPerRequest: 10,
+        totalItems: 15,
+        currentPage: 1,
+        lastPage: 1,
+      }),
+    ).toBe(1);
   });
 });
 

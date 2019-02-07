@@ -1,8 +1,12 @@
 <BaseButton style="width: 50px;"
             disabled={!$paginationState.previousPageExists}
             on:click="$dispatch('previousPage')">&larr;</BaseButton>
-<div class="page-numbers">
-	&nbsp;{$paginationState.currentPage}&nbsp;
+<div class="page-numbers"
+     on:click="$dispatch('ui/toggleTotalPagesDisplay')">
+	{$paginationState.currentPage}
+	{#if $uiState.displayTotalPages}
+	&nbsp;/ {$paginationState.totalPages}
+	{/if}
 </div>
 <BaseButton style="width: 50px;"
             disabled={!$paginationState.nextPageExists}

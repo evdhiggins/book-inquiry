@@ -157,8 +157,16 @@ class ItemsModule extends StoreModule {
    */
   async _prefetchNextPage() {
     if (!this.nextPageIsCached) {
-      this._setStartIndex(this.currentPage + 1, this.itemsPerRequest);
+      const { currentPage, itemsPerRequest } = this.get();
+      this._setStartIndex(currentPage + 1, itemsPerRequest);
+      const { startIndex } = this.get();
       await this._fetchItemsFromApi(true);
+      const { cachedItems } = this.get();
+
+      // if no items are returned, set the currentValue's last page as the current page
+      if (Array.isArray(cachedItems[startIndex]) && cachedItems[startIndex].length === 0) {
+        this.dispatch('lastPageEncountered', currentPage);
+      }
     }
   }
 }
