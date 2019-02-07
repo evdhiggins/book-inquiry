@@ -2,11 +2,6 @@ import { Store } from 'svelte/store';
 import { StoreModule as StoreModuleClass } from './StoreModule';
 
 export default class StoreRoot extends Store {
-  constructor(state) {
-    super(state);
-    this._dispatchTriggers = {};
-  }
-
   /**
    * Add a store module to the root store instance
    * @param {string} moduleName The name of the module, used for namespacing
@@ -69,39 +64,6 @@ export default class StoreRoot extends Store {
       console.warn(e.message);
       return null;
     }
-    if (Array.isArray(this._dispatchTriggers[action])) {
-      // call any trigger functions after `dispatch` returns
-      setTimeout(() => {
-        this._dispatchTriggers[action].forEach((fn) => {
-          try {
-            fn(...args);
-          } catch (e) {
-            console.error(`Dispatch trigger error: "${action}" trigger threw an error:`);
-            console.error(e.message);
-          }
-        });
-      }, 0);
-    }
     return actionFunction(...args);
-  }
-
-  /**
-   * Add a function that will be called after a given action is dispatched. The triggered
-   * function will be triggered after `dispatch` returns, but it will not wait for any
-   * asynchronous dispatch actions to resolve.
-   * @param {string} action The name of the triggering action
-   * @param {function|string} triggerFunction The trigger function. If `fn` is a string it
-   * will be called via `StoreRoot.dispatch`
-   */
-  addDispatchTrigger(action, triggerFunction) {
-    if (!Array.isArray(this._dispatchTriggers[action])) {
-      this._dispatchTriggers[action] = [];
-    }
-    if (typeof triggerFunction === 'string') {
-      const dispatchFunction = (...args) => this.dispatch(triggerFunction, ...args);
-      this._dispatchTriggers[action].push(dispatchFunction);
-    } else {
-      this._dispatchTriggers[action].push(triggerFunction);
-    }
   }
 }
