@@ -57,7 +57,7 @@ class PaginationModule extends StoreModule {
    * the returned `totalItems` value
    */
   setLastPage(lastPage) {
-    this.lastPage = lastPage;
+    this.set({ lastPage });
   }
 
   /**
@@ -65,9 +65,8 @@ class PaginationModule extends StoreModule {
    */
   nextPage() {
     if (this.nextPageExists) {
-      this.currentPage += 1;
+      this.set({ currentPage: this.currentPage + 1 });
     }
-    return this;
   }
 
   /**
@@ -75,21 +74,22 @@ class PaginationModule extends StoreModule {
    */
   previousPage() {
     if (this.previousPageExists) {
-      this.currentPage -= 1;
+      this.set({ currentPage: this.currentPage - 1 });
     }
-    return this;
   }
 
   /**
    * Manually set currentPage. If the value is out of page bounds, the closest value is chosen
    */
   setPage(newPage) {
-    this.currentPage = newPage;
+    this.set({ currentPage: newPage });
   }
 
   updateItemCounts({ itemsPerRequest = 1, itemsState: { totalItems = 0 } }) {
-    this.itemsPerRequest = Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1;
-    this.totalItems = Number(totalItems) > 0 ? Number(totalItems) : 0;
+    this.set({
+      itemsPerRequest: Number(itemsPerRequest) > 0 ? Number(itemsPerRequest) : 1,
+      totalItems: Number(totalItems) > 0 ? Number(totalItems) : 0,
+    });
   }
 }
 

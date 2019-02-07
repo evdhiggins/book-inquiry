@@ -55,7 +55,7 @@ class HistoryModule extends StoreModule {
         return this.dispatch('clearState');
       }
     } else {
-      this.pageState = navigationEvent.state;
+      this.set({ pageState: navigationEvent.state });
     }
     return this.dispatch('navigationChange', this.pageState);
   }
@@ -80,21 +80,23 @@ class HistoryModule extends StoreModule {
       acc[key] = decodeURIComponent(value);
       return acc;
     }, {});
-    this.pageState = {
+    const pageState = {
       currentPage:
         !Number.isNaN(Number(params.page)) && Number(params.page) > 0 ? Number(params.page) : 1,
       searchValue: params.q || '',
     };
+    this.set({ pageState });
   }
 
   /**
    * Update the History module's account of page state from the StoreRoot state
    */
   _updatePageState({ paginationState, searchValue }) {
-    this.pageState = {
+    const pageState = {
       searchValue,
       currentPage: paginationState.currentPage,
     };
+    this.set({ pageState });
   }
 }
 

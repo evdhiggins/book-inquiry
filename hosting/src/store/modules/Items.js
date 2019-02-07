@@ -87,7 +87,7 @@ class ItemsModule extends StoreModule {
       this.clearCache();
     }
 
-    this.cachedSearch = searchValue;
+    this.set({ cachedSearch: searchValue });
     this._setStartIndex(currentPage, itemsPerRequest);
 
     if (!this.itemsAreInCache) {
@@ -119,11 +119,11 @@ class ItemsModule extends StoreModule {
     const isValidNumber = numValue => Number(numValue) > 0;
 
     if (!isValidNumber(currentPage) || !isValidNumber(itemsPerRequest)) {
-      this.startIndex = 0;
-      return;
+      return this.set({ startIndex: 0 });
     }
 
-    this.startIndex = (currentPage - 1) * itemsPerRequest;
+    const startIndex = (currentPage - 1) * itemsPerRequest;
+    return this.set({ startIndex });
   }
 
   /**

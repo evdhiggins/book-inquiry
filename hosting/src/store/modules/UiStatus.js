@@ -39,7 +39,7 @@ class UiStatusModule extends StoreModule {
    * Toggle visibility of total page count in pagination interface
    */
   toggleTotalPagesDisplay() {
-    this.displayTotalPages = !this.displayTotalPages;
+    this.set({ displayTotalPages: !this.displayTotalPages });
   }
 }
 
